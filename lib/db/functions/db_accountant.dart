@@ -22,17 +22,17 @@ class DbAccountant {
   }
 
   static Future<List<Map<String, Object?>>?> getAllFromTable(String tableName) async {
-    checkIfDbNull(_db);
+    checkIfDbNullOrOpen(_db);
     return await _db?.query(tableName);
   }
 
-  static void deleteFromTable(int id, String tableName) async {
-    checkIfDbNull(_db);
+  static Future<void> deleteFromTable(int id, String tableName) async {
+    checkIfDbNullOrOpen(_db);
     await _db?.delete(tableName, where: 'id = ?', whereArgs: [id]);
   }
 
-  static void checkIfDbNull(Database? db){
-    if(db == null){
+  static void checkIfDbNullOrOpen(Database? db){
+    if(db == null || !db.isOpen){
       throw Exception("Database not initialized. Please run DbAccountant.initDb() first.");
     }
   }

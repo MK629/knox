@@ -1,6 +1,6 @@
 class Queries {
   static final String createRecordTable = '''
-
+    
   ''';
 
   static final String createConstantIncomeTable = '''
@@ -22,6 +22,6 @@ enum RecordType{
   income, expense
 }
 
-enum Interval{
+enum UpdateInterval{
   hourly, daily, monthly, yearly
 }
