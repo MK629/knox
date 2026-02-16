@@ -22,8 +22,51 @@ import 'package:knox/db/constants.dart';
 class Lifeduty {
   int? id;
   late String tag;
-  late UpdateInterval interval;
+  late UpdateInterval updateInterval;
   late double amount;
 
-  Lifeduty({this.id, required this.tag, required this.interval, required this.amount});
+  Lifeduty._({this.id, required this.tag, required this.updateInterval, required this.amount});
+
+  factory Lifeduty.toInsertObject(String tag, UpdateInterval updateInterval, double amount){
+    return Lifeduty._(
+      tag: tag, 
+      updateInterval: updateInterval, 
+      amount: amount
+    );
+  }
+
+  factory Lifeduty.fromMap(Map<String, Object?> mapFromDb){
+    return Lifeduty._(
+      id: mapFromDb["id"] as int,
+      tag: mapFromDb["tag"] as String, 
+      updateInterval: UpdateInterval.values.byName(mapFromDb["update_interval"] as String), 
+      amount: mapFromDb["amount"] as double
+    );
+  }
+
+  Map<String, Object?> toMap(){
+    return {
+      "id" : id,
+      "tag" : tag,
+      "update_interval" : updateInterval.name,
+      "amount" : amount
+    };
+  }
+
+  ///[id] is excluded for insertions.
+  Map<String, Object?> toInsertMap(){
+    return {
+      "tag" : tag,
+      "update_interval" : updateInterval.name,
+      "amount" : amount
+    };
+  }
+
+  void updateTag(String newTag){
+    tag = newTag;
+  }
+
+  void updateAmount(double newAmount){
+    amount = newAmount;
+  }
 }

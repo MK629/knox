@@ -36,4 +36,12 @@ class DbAccountant {
       throw Exception("Database not initialized. Please run DbAccountant.initDb() first.");
     }
   }
+
+  ///Will remove after development
+  static Future<void> cleanDb() async {
+    checkIfDbNullOrOpen(_db);
+    await _db?.delete(TableNames.recTbl);
+    await _db?.delete(TableNames.conInTbl);
+    await _db?.delete(TableNames.conOutTbl);
+  }
 }

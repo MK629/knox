@@ -1,14 +1,31 @@
 class Queries {
   static final String createRecordTable = '''
-    
+    CREATE TABLE IF NOT EXISTS ${TableNames.recTbl} (
+      id INTEGER PRIMARY KEY,
+      type TEXT NOT NULL,
+      tag TEXT NOT NULL,
+      crt_time TEXT NOT NULL,
+      upd_time TEXT NOT NULL,
+      amount DOUBLE NOT NULL
+    );
   ''';
 
   static final String createConstantIncomeTable = '''
-    
+    CREATE TABLE IF NOT EXISTS ${TableNames.conInTbl} (
+      id INTEGER PRIMARY KEY,
+      tag TEXT NOT NULL,
+      update_interval TEXT NOT NULL,
+      amount DOUBLE NOT NULL
+    );   
   ''';
 
   static final String createConstantExpenseTable = '''
-    
+    CREATE TABLE IF NOT EXISTS ${TableNames.conInTbl} (
+      id INTEGER PRIMARY KEY,
+      tag TEXT NOT NULL,
+      update_interval TEXT NOT NULL,
+      amount DOUBLE NOT NULL
+    );     
   ''';
 }
 
