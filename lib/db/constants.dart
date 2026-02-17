@@ -6,7 +6,8 @@ class Queries {
       tag TEXT NOT NULL,
       crt_time TEXT NOT NULL,
       upd_time TEXT NOT NULL,
-      amount DOUBLE NOT NULL
+      amount DOUBLE NOT NULL,
+      enforced INTEGER NOT NULL CHECK (enforced IN (0, 1))
     );
   ''';
 
@@ -16,7 +17,7 @@ class Queries {
       tag TEXT NOT NULL,
       update_interval TEXT NOT NULL,
       amount DOUBLE NOT NULL
-    );   
+    );
   ''';
 
   static final String createConstantExpenseTable = '''
@@ -25,7 +26,7 @@ class Queries {
       tag TEXT NOT NULL,
       update_interval TEXT NOT NULL,
       amount DOUBLE NOT NULL
-    );     
+    );
   ''';
 }
 

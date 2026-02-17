@@ -19,24 +19,24 @@ import 'package:knox/db/constants.dart';
 /// </ul>
 /// 
 /// TL:DR => This is an entity used in [constant_incomes] table and [constant_expenses] table.
-class Lifeduty {
+class LifeDuty {
   int? id;
   late String tag;
   late UpdateInterval updateInterval;
   late double amount;
 
-  Lifeduty._({this.id, required this.tag, required this.updateInterval, required this.amount});
+  LifeDuty._({this.id, required this.tag, required this.updateInterval, required this.amount});
 
-  factory Lifeduty.toInsertObject(String tag, UpdateInterval updateInterval, double amount){
-    return Lifeduty._(
+  factory LifeDuty.toInsertObject(String tag, UpdateInterval updateInterval, double amount){
+    return LifeDuty._(
       tag: tag, 
       updateInterval: updateInterval, 
       amount: amount
     );
   }
 
-  factory Lifeduty.fromMap(Map<String, Object?> mapFromDb){
-    return Lifeduty._(
+  factory LifeDuty.fromMap(Map<String, Object?> mapFromDb){
+    return LifeDuty._(
       id: mapFromDb["id"] as int,
       tag: mapFromDb["tag"] as String, 
       updateInterval: UpdateInterval.values.byName(mapFromDb["update_interval"] as String), 
