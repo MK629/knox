@@ -41,5 +41,5 @@ enum RecordType{
 }
 
 enum UpdateInterval{
-  hourly, daily, monthly, yearly
+  daily, monthly, yearly
 }

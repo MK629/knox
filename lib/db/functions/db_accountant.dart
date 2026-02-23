@@ -22,13 +22,13 @@ class DbAccountant {
   }
 
   static Future<List<Map<String, Object?>>?> getAllFromTable(String tableName) async {
-    checkValidTableName(tableName);
+    _checkValidTableName(tableName);
     checkIfDbNullOrOpen(_db);
     return await _db?.query(tableName);
   }
 
   static Future<void> deleteFromTable(int id, String tableName) async {
-    checkValidTableName(tableName);
+    _checkValidTableName(tableName);
     checkIfDbNullOrOpen(_db);
     await _db?.delete(tableName, where: 'id = ?', whereArgs: [id]);
   }
@@ -47,7 +47,7 @@ class DbAccountant {
     await _db?.delete(TableNames.conOutTbl);
   }
 
-  static void checkValidTableName(String table){
+  static void _checkValidTableName(String table){
     if(table != TableNames.conInTbl || table != TableNames.conOutTbl || table != TableNames.recTbl){
       throw Exception("Invalid table name. Write either [${TableNames.conInTbl}], [${TableNames.conOutTbl}] or [${TableNames.recTbl}].");
     }
