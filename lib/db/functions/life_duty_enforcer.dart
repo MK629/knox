@@ -29,6 +29,7 @@ class LifeDutyEnforcer {
     await _enforceMonthly(db);
     await _enforceYearly(db);
   }
+  
   //===============[ Private internal ]===============
 
   static Future<void> _enforceDaily(Database? db) async {
@@ -52,7 +53,7 @@ class LifeDutyEnforcer {
   }
 
   static Future<void> _enforceYearly(Database? db) async {
-    List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.monthly, db);
+    List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.yearly, db);
 
     if(lifeDutyResult == null || lifeDutyResult.isEmpty){
       return;
