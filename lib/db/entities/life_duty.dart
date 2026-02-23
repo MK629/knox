@@ -21,14 +21,16 @@ import 'package:knox/db/constants.dart';
 /// TL:DR => This is an entity used in [constant_incomes] table and [constant_expenses] table.
 class LifeDuty {
   int? id;
+  late RecordType type;
   late String tag;
   late UpdateInterval updateInterval;
   late double amount;
 
-  LifeDuty._({this.id, required this.tag, required this.updateInterval, required this.amount});
+  LifeDuty._({this.id, required this.type, required this.tag, required this.updateInterval, required this.amount});
 
-  factory LifeDuty.toInsertObject(String tag, UpdateInterval updateInterval, double amount){
+  factory LifeDuty.toInsertObject(String tag, RecordType type, UpdateInterval updateInterval, double amount){
     return LifeDuty._(
+      type: type,
       tag: tag, 
       updateInterval: updateInterval, 
       amount: amount
@@ -38,6 +40,7 @@ class LifeDuty {
   factory LifeDuty.fromMap(Map<String, Object?> mapFromDb){
     return LifeDuty._(
       id: mapFromDb["id"] as int,
+      type: RecordType.values.byName(mapFromDb["type"] as String),
       tag: mapFromDb["tag"] as String, 
       updateInterval: UpdateInterval.values.byName(mapFromDb["update_interval"] as String), 
       amount: mapFromDb["amount"] as double
@@ -47,6 +50,7 @@ class LifeDuty {
   Map<String, Object?> toMap(){
     return {
       "id" : id,
+      "type" : type.name,
       "tag" : tag,
       "update_interval" : updateInterval.name,
       "amount" : amount
@@ -56,6 +60,7 @@ class LifeDuty {
   ///[id] is excluded for insertions.
   Map<String, Object?> toInsertMap(){
     return {
+      "type" : type.name,
       "tag" : tag,
       "update_interval" : updateInterval.name,
       "amount" : amount

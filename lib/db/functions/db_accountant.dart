@@ -14,8 +14,7 @@ class DbAccountant {
       join(databasesPath, 'knox.db'),
       onCreate: (db, version) {
         db.execute(Queries.createRecordTable);
-        db.execute(Queries.createConstantIncomeTable);
-        db.execute(Queries.createConstantExpenseTable);
+        db.execute(Queries.createLifeDutyTable);
       },
       version: 1
     );
@@ -43,13 +42,12 @@ class DbAccountant {
   static Future<void> cleanDb() async {
     checkIfDbNullOrOpen(_db);
     await _db?.delete(TableNames.recTbl);
-    await _db?.delete(TableNames.conInTbl);
-    await _db?.delete(TableNames.conOutTbl);
+    await _db?.delete(TableNames.lifeDutyTbl);
   }
 
   static void _checkValidTableName(String table){
-    if(table != TableNames.conInTbl || table != TableNames.conOutTbl || table != TableNames.recTbl){
-      throw Exception("Invalid table name. Write either [${TableNames.conInTbl}], [${TableNames.conOutTbl}] or [${TableNames.recTbl}].");
+    if(table != TableNames.lifeDutyTbl || table != TableNames.recTbl){
+      throw Exception("Invalid table name. Write either [${TableNames.lifeDutyTbl}] or [${TableNames.recTbl}].");
     }
   }
 }

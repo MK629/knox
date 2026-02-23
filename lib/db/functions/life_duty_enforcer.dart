@@ -5,22 +5,20 @@ import 'package:sqflite/sqlite_api.dart';
 
 class LifeDutyEnforcer {
   
-  static Future<void> insertNewDuty(LifeDuty lifeDuty, String table) async {
-    _checkValidTableName(table);
+  static Future<void> insertNewDuty(LifeDuty lifeDuty) async {
 
     final db = DbAccountant.getDb;
     DbAccountant.checkIfDbNullOrOpen(db);
 
-    await db?.insert(table, lifeDuty.toInsertMap());
+    await db?.insert(TableNames.lifeDutyTbl, lifeDuty.toInsertMap());
   }
 
-  static Future<void> updateDuty(LifeDuty lifeDuty, String table) async {
-    _checkValidTableName(table);
+  static Future<void> updateDuty(LifeDuty lifeDuty) async {
 
     final db = DbAccountant.getDb;
     DbAccountant.checkIfDbNullOrOpen(db);
 
-    await db?.update(table, lifeDuty.toMap(), where: "id = ?", whereArgs: [lifeDuty.id]);
+    await db?.update(TableNames.lifeDutyTbl, lifeDuty.toMap(), where: "id = ?", whereArgs: [lifeDuty.id]);
   }
 
   static Future<void> enforceDuty() async {
@@ -31,61 +29,39 @@ class LifeDutyEnforcer {
     await _enforceMonthly(db);
     await _enforceYearly(db);
   }
-
-  static void _checkValidTableName(String table){
-    if(table != TableNames.conInTbl || table != TableNames.conOutTbl){
-      throw Exception("Invalid table name. Write either [${TableNames.conInTbl}] or [${TableNames.conOutTbl}].");
-    }
-  }
-
   //===============[ Private internal ]===============
 
   static Future<void> _enforceDaily(Database? db) async {
-    _increment(UpdateInterval.daily, db);
-    _decrement(UpdateInterval.daily, db);
+    List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.daily, db);
+
+    if(lifeDutyResult == null || lifeDutyResult.isEmpty){
+      return;
+    }
+
+    List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
   }
 
   static Future<void> _enforceMonthly(Database? db) async { 
-    _increment(UpdateInterval.monthly, db);
-    _decrement(UpdateInterval.monthly, db);
+    List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.monthly, db);
+
+    if(lifeDutyResult == null || lifeDutyResult.isEmpty){
+      return;
+    }
+
+    List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
   }
 
   static Future<void> _enforceYearly(Database? db) async {
-    _increment(UpdateInterval.yearly, db);
-    _decrement(UpdateInterval.yearly, db);
-  }
-
-  static Future<void> _increment(UpdateInterval updateInterval, Database? db) async {
-    List<Map<String, Object?>>? lifeDutyResult = await db?.query(TableNames.conInTbl, where: "update_interval = ?", whereArgs: [updateInterval.name]);
+    List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.monthly, db);
 
     if(lifeDutyResult == null || lifeDutyResult.isEmpty){
       return;
     }
 
-    List<LifeDuty> lifeDutyList = lifeDutyResult.map((map) => LifeDuty.fromMap(map)).toList();
-
-    switch(updateInterval){
-      case UpdateInterval.daily:
-      case UpdateInterval.monthly:
-      case UpdateInterval.yearly:
-    }
+    List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
   }
 
-  static Future<void> _decrement(UpdateInterval updateInterval, Database? db) async {
-    List<Map<String, Object?>>? lifeDutyResult = await db?.query(TableNames.conOutTbl, where: "update_interval = ?", whereArgs: [updateInterval.name]);
-
-    if(lifeDutyResult == null || lifeDutyResult.isEmpty){
-      return;
-    }
-
-    List<LifeDuty> lifeDutyList = lifeDutyResult.map((map) => LifeDuty.fromMap(map)).toList();
-
-    switch(updateInterval){
-      case UpdateInterval.daily:
-      case UpdateInterval.monthly:
-      case UpdateInterval.yearly:
-    }
+  static Future<List<Map<String, Object?>>?> _fetchLifeDutyByInterval(UpdateInterval updateInterval, Database? db) async {
+    return await db?.query(TableNames.lifeDutyTbl, where: "update_interval = ?", whereArgs: [updateInterval.name]);
   }
-
-  
 }

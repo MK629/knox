@@ -11,18 +11,10 @@ class Queries {
     );
   ''';
 
-  static final String createConstantIncomeTable = '''
-    CREATE TABLE IF NOT EXISTS ${TableNames.conInTbl} (
+  static final String createLifeDutyTable = '''
+    CREATE TABLE IF NOT EXISTS ${TableNames.lifeDutyTbl} (
       id INTEGER PRIMARY KEY,
-      tag TEXT NOT NULL,
-      update_interval TEXT NOT NULL,
-      amount DOUBLE NOT NULL
-    );
-  ''';
-
-  static final String createConstantExpenseTable = '''
-    CREATE TABLE IF NOT EXISTS ${TableNames.conInTbl} (
-      id INTEGER PRIMARY KEY,
+      type TEXT NOT NULL,
       tag TEXT NOT NULL,
       update_interval TEXT NOT NULL,
       amount DOUBLE NOT NULL
@@ -32,8 +24,7 @@ class Queries {
 
 class TableNames{
   static final String recTbl = "records";
-  static final String conInTbl = "constant_incomes";
-  static final String conOutTbl = "constant_expenses";
+  static final String lifeDutyTbl = "life_duties";
 }
 
 enum RecordType{
@@ -43,3 +34,4 @@ enum RecordType{
 enum UpdateInterval{
   daily, monthly, yearly
 }
+
