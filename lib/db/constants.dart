@@ -7,7 +7,7 @@ class Queries {
       crt_time TEXT NOT NULL,
       upd_time TEXT NOT NULL,
       amount DOUBLE NOT NULL,
-      enforced INTEGER NOT NULL CHECK (enforced IN (0, 1))
+      enforcement TEXT NOT NULL 
     );
   ''';
 
@@ -32,6 +32,6 @@ enum RecordType{
 }
 
 enum UpdateInterval{
-  daily, monthly, yearly
+  manual, daily, monthly, yearly
 }
 
