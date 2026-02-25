@@ -1,39 +1,25 @@
+import 'package:flutter/material.dart';
 import 'package:knox/db/constants.dart';
 
-/// <h2>Life Duty</h2>
-/// <br/>
-/// <p>
-/// Inavoidable.., inevitable... and ultimately implemented regardless of one's delight or disdain...
-/// <br/>
-/// Such is a life full of many duties and responsibilities.
-/// </p>
-/// <br/>
-/// <h4>What is life, if naught of struggle?</h4>
-/// <br/>
-/// <h4>What is struggle, if not for life?</h4>
-/// <br/>
-/// This entity represents recurring, non-negotiable forces:
-/// <ul>
-/// <li>Income that must arrive</li>
-/// <li>Expenses that must be paid</li>
-/// </ul>
-/// 
-/// TL:DR => This is an entity used in [constant_incomes] table and [constant_expenses] table.
 class LifeDuty {
   int? id;
   late RecordType type;
   late String tag;
   late UpdateInterval updateInterval;
   late double amount;
+  late DateTime startDate;
+  late DateTime latestUpdate;
 
-  LifeDuty._({this.id, required this.type, required this.tag, required this.updateInterval, required this.amount});
+  LifeDuty._({this.id, required this.type, required this.tag, required this.updateInterval, required this.amount, required this.startDate, required this.latestUpdate});
 
-  factory LifeDuty.toInsertObject(String tag, RecordType type, UpdateInterval updateInterval, double amount){
+  factory LifeDuty.toInsertObject(String tag, RecordType type, UpdateInterval updateInterval, double amount, DateTime startDate, DateTime latestUpdate){
     return LifeDuty._(
       type: type,
       tag: tag, 
       updateInterval: updateInterval, 
-      amount: amount
+      amount: amount,
+      startDate: DateUtils.dateOnly(startDate),
+      latestUpdate: DateUtils.dateOnly(latestUpdate)
     );
   }
 
@@ -43,7 +29,9 @@ class LifeDuty {
       type: RecordType.values.byName(mapFromDb["type"] as String),
       tag: mapFromDb["tag"] as String, 
       updateInterval: UpdateInterval.values.byName(mapFromDb["update_interval"] as String), 
-      amount: mapFromDb["amount"] as double
+      amount: mapFromDb["amount"] as double,
+      startDate: DateTime.parse(mapFromDb["start_date"] as String),
+      latestUpdate: DateTime.parse(mapFromDb["latest_update"] as String)
     );
   }
 
@@ -53,7 +41,9 @@ class LifeDuty {
       "type" : type.name,
       "tag" : tag,
       "update_interval" : updateInterval.name,
-      "amount" : amount
+      "amount" : amount,
+      "start_date" : startDate.toString(),
+      "latest_update" : latestUpdate.toString()
     };
   }
 
@@ -63,7 +53,9 @@ class LifeDuty {
       "type" : type.name,
       "tag" : tag,
       "update_interval" : updateInterval.name,
-      "amount" : amount
+      "amount" : amount,
+      "start_date" : startDate.toString(),
+      "latest_update" : latestUpdate.toString()
     };
   }
 
@@ -73,5 +65,9 @@ class LifeDuty {
 
   void updateAmount(double newAmount){
     amount = newAmount;
+  }
+
+  void setLatestUpdateDate(DateTime newLatestUpdate){
+    latestUpdate = DateUtils.dateOnly(newLatestUpdate);
   }
 }

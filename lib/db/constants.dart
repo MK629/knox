@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Queries {
   static final String createRecordTable = '''
     CREATE TABLE IF NOT EXISTS ${TableNames.recTbl} (
@@ -6,8 +8,7 @@ class Queries {
       tag TEXT NOT NULL,
       crt_time TEXT NOT NULL,
       upd_time TEXT NOT NULL,
-      amount DOUBLE NOT NULL,
-      enforcement TEXT NOT NULL 
+      amount DOUBLE NOT NULL
     );
   ''';
 
@@ -17,7 +18,9 @@ class Queries {
       type TEXT NOT NULL,
       tag TEXT NOT NULL,
       update_interval TEXT NOT NULL,
-      amount DOUBLE NOT NULL
+      amount DOUBLE NOT NULL,
+      start_date TEXT NOT NULL,
+      latest_update TEXT NOT NULL,
     );
   ''';
 }
@@ -32,6 +35,16 @@ enum RecordType{
 }
 
 enum UpdateInterval{
-  manual, daily, monthly, yearly
+  daily, monthly, yearly
 }
+
+class CommonMessages{
+  static final String resultNull = "Result returned null.";
+}
+
+class TimeHelper{
+  static final String lowTimeString = "0001-01-01 00:00:00.000";
+  static DateTime todayDate = DateUtils.dateOnly(DateTime.now());
+}
+
 
