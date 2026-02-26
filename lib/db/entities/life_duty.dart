@@ -12,14 +12,14 @@ class LifeDuty {
 
   LifeDuty._({this.id, required this.type, required this.tag, required this.updateInterval, required this.amount, required this.startDate, required this.latestUpdate});
 
-  factory LifeDuty.toInsertObject(String tag, RecordType type, UpdateInterval updateInterval, double amount, DateTime startDate, DateTime latestUpdate){
+  factory LifeDuty.toInsertObject(String tag, RecordType type, UpdateInterval updateInterval, double amount, DateTime startDate){
     return LifeDuty._(
       type: type,
       tag: tag, 
       updateInterval: updateInterval, 
       amount: amount,
       startDate: DateUtils.dateOnly(startDate),
-      latestUpdate: DateUtils.dateOnly(latestUpdate)
+      latestUpdate: DateUtils.dateOnly(DateTime.parse(TimeHelper.lowTimeString))
     );
   }
 

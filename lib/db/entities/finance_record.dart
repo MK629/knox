@@ -11,12 +11,12 @@ class FinanceRecord {
 
   FinanceRecord._({this.id, required this.type, required this.tag, required this.crtTime, required this.updTime, required this.amount});
 
-  factory FinanceRecord.toInsertObject(RecordType type, String tag, double amount){
+  factory FinanceRecord.toInsertObject(RecordType type, String tag, DateTime crtTime, double amount){
     return FinanceRecord._(
       type: type, 
       tag: tag, 
-      crtTime: DateTime.now(),
-      updTime: DateTime.now(),
+      crtTime: crtTime,
+      updTime: crtTime,
       amount: amount
     );
   }

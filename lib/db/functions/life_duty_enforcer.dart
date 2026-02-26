@@ -4,6 +4,7 @@ import 'package:knox/db/entities/finance_record.dart';
 import 'package:knox/db/entities/life_duty.dart';
 import 'package:knox/db/functions/db_accountant.dart';
 import 'package:knox/db/functions/finance_record_keeper.dart';
+import 'package:knox/utils/knox_date_util.dart';
 import 'package:sqflite/sqlite_api.dart';
 
 class LifeDutyEnforcer {
@@ -13,11 +14,12 @@ class LifeDutyEnforcer {
     final db = DbAccountant.getDb;
     DbAccountant.checkIfDbNullOrOpen(db);
 
-    await db?.insert(TableNames.lifeDutyTbl, lifeDuty.toInsertMap());
-
-    if(DateUtils.isSameDay(lifeDuty.startDate, DateTime.now())){
-      await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(lifeDuty.type, lifeDuty.tag, lifeDuty.amount));
+    if(DateUtils.isSameDay(lifeDuty.startDate, TimeHelper.todayDate)){
+      await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(lifeDuty.type, lifeDuty.tag, TimeHelper.todayDate, lifeDuty.amount));
+      lifeDuty.setLatestUpdateDate(TimeHelper.todayDate);
     }
+
+    await db?.insert(TableNames.lifeDutyTbl, lifeDuty.toInsertMap());
   }
 
   static Future<void> updateDuty(LifeDuty lifeDuty) async {
@@ -50,22 +52,30 @@ class LifeDutyEnforcer {
 
     for(LifeDuty ld in lifeDutyList){
       if(ld.latestUpdate.isBefore(TimeHelper.todayDate)){
-        //First-time insertion.
+        //First-time insertion, if coincidence.
         if(DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
-          await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, ld.amount));
-          //do function to update latestUpdate here
+          await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, TimeHelper.todayDate, ld.amount));
+          ld.setLatestUpdateDate(TimeHelper.todayDate);
+          await updateDuty(ld);
         }
         //Make-up lost insertions
         else if(ld.startDate.isBefore(TimeHelper.todayDate)){
-          DateTime insertionStartDate;
+          DateTime insertionDate;
 
-          //If no prior update has been done yet
+          //If no prior update has been done yet. Include first-time insertion.
           if(DateUtils.isSameDay(ld.latestUpdate, DateTime.parse(TimeHelper.lowTimeString))){
-            insertionStartDate = ld.startDate;
+            insertionDate = ld.startDate;
           }
           //Continue where last updated
           else{
-            insertionStartDate = ld.latestUpdate;
+            insertionDate = ld.latestUpdate.add(Duration(days: 1));
+          }
+
+          while(insertionDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(insertionDate, TimeHelper.todayDate)){
+            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate,ld.amount));
+            ld.setLatestUpdateDate(insertionDate);
+            await updateDuty(ld);
+            insertionDate = insertionDate.add(Duration(days: 1));
           }
         }
       }
@@ -73,30 +83,57 @@ class LifeDutyEnforcer {
   }
 
   static Future<void> _enforceMonthly(Database? db) async { 
-    List<Map<String, Object?>>? latestEnforcement = await db?.rawQuery("SELECT MAX(crt_time) AS latest_date FROM ${TableNames.recTbl} WHERE enforcement = '${UpdateInterval.monthly.name}';");
-
-    if(latestEnforcement == null){
-      throw Exception(CommonMessages.resultNull);
-    }
-
     List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.monthly, db);
 
-    if(lifeDutyResult != null && lifeDutyResult.isNotEmpty){
-      List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
+    if(lifeDutyResult == null || lifeDutyResult.isEmpty){
+      return;
+    }
+
+    List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
+
+    for(LifeDuty ld in lifeDutyList){
+      if(KnoxDateUtil.isMoreThanOneMonthDiff(ld.latestUpdate, TimeHelper.todayDate, ld.startDate.day)){
+        //First-time insertion, if coincidence.
+        if(DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
+          await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, TimeHelper.todayDate, ld.amount));
+          ld.setLatestUpdateDate(TimeHelper.todayDate);
+          await updateDuty(ld);
+        }
+        //Make-up lost insertions
+        else if(ld.startDate.isBefore(TimeHelper.todayDate)){
+          DateTime insertionDate;
+
+          //If no prior update has been done yet. Include first-time insertion.
+          if(DateUtils.isSameDay(ld.latestUpdate, DateTime.parse(TimeHelper.lowTimeString))){
+            insertionDate = ld.startDate;
+          }
+          //Continue where last updated
+          else{
+            insertionDate = KnoxDateUtil.nextMonth(ld.latestUpdate, ld.startDate.day);
+          }
+
+          while(insertionDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(insertionDate, TimeHelper.todayDate)){
+            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate,ld.amount));
+            ld.setLatestUpdateDate(insertionDate);
+            await updateDuty(ld);
+            insertionDate = KnoxDateUtil.nextMonth(insertionDate, ld.startDate.day);
+          }
+        }
+      }
     }
   }
 
   static Future<void> _enforceYearly(Database? db) async {
-    List<Map<String, Object?>>? latestEnforcement = await db?.rawQuery("SELECT MAX(crt_time) AS latest_date FROM ${TableNames.recTbl} WHERE enforcement = '${UpdateInterval.yearly.name}';");
-
-    if(latestEnforcement == null){
-      throw Exception(CommonMessages.resultNull);
-    }
-
     List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.yearly, db);
 
-    if(lifeDutyResult != null && lifeDutyResult.isNotEmpty){
-      List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
+    if(lifeDutyResult == null || lifeDutyResult.isEmpty){
+      return;
+    }
+
+    List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
+
+    for(LifeDuty ld in lifeDutyList){
+      
     }
   }
 
