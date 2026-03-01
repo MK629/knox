@@ -43,7 +43,8 @@ class CommonMessages{
 }
 
 class TimeHelper{
-  static final String lowTimeString = "0001-01-01 00:00:00.000";
+  static final String _lowTimeString = "0001-01-01 00:00:00.000";
+  static DateTime stoneAge = DateTime.parse(_lowTimeString);
   static DateTime todayDate = DateUtils.dateOnly(DateTime.now());
 }
 

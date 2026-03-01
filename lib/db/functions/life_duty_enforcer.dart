@@ -52,18 +52,12 @@ class LifeDutyEnforcer {
 
     for(LifeDuty ld in lifeDutyList){
       if(ld.latestUpdate.isBefore(TimeHelper.todayDate)){
-        //First-time insertion, if coincidence.
-        if(DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
-          await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, TimeHelper.todayDate, ld.amount));
-          ld.setLatestUpdateDate(TimeHelper.todayDate);
-          await updateDuty(ld);
-        }
         //Make-up lost insertions
-        else if(ld.startDate.isBefore(TimeHelper.todayDate)){
+        if(ld.startDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
           DateTime insertionDate;
 
-          //If no prior update has been done yet. Include first-time insertion.
-          if(DateUtils.isSameDay(ld.latestUpdate, DateTime.parse(TimeHelper.lowTimeString))){
+          //First time insertion
+          if(DateUtils.isSameDay(ld.latestUpdate, TimeHelper.stoneAge)){
             insertionDate = ld.startDate;
           }
           //Continue where last updated
@@ -72,11 +66,12 @@ class LifeDutyEnforcer {
           }
 
           while(insertionDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(insertionDate, TimeHelper.todayDate)){
-            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate,ld.amount));
+            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate, ld.amount));
             ld.setLatestUpdateDate(insertionDate);
-            await updateDuty(ld);
             insertionDate = insertionDate.add(Duration(days: 1));
           }
+
+          await updateDuty(ld);
         }
       }
     }
@@ -92,32 +87,27 @@ class LifeDutyEnforcer {
     List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
 
     for(LifeDuty ld in lifeDutyList){
-      if(KnoxDateUtil.isMoreThanOneMonthDiff(ld.latestUpdate, TimeHelper.todayDate, ld.startDate.day)){
-        //First-time insertion, if coincidence.
-        if(DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
-          await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, TimeHelper.todayDate, ld.amount));
-          ld.setLatestUpdateDate(TimeHelper.todayDate);
-          await updateDuty(ld);
-        }
-        //Make-up lost insertions
-        else if(ld.startDate.isBefore(TimeHelper.todayDate)){
+      if(KnoxDateUtil.isMoreThanOrIsOneMonthDiff(ld.latestUpdate, TimeHelper.todayDate, ld.startDate)){
+        //Check if insertion should start.
+        if(ld.startDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
           DateTime insertionDate;
 
-          //If no prior update has been done yet. Include first-time insertion.
-          if(DateUtils.isSameDay(ld.latestUpdate, DateTime.parse(TimeHelper.lowTimeString))){
+          //First time insertion
+          if(DateUtils.isSameDay(ld.latestUpdate, TimeHelper.stoneAge)){
             insertionDate = ld.startDate;
           }
           //Continue where last updated
           else{
-            insertionDate = KnoxDateUtil.nextMonth(ld.latestUpdate, ld.startDate.day);
+            insertionDate = KnoxDateUtil.nextMonth(ld.latestUpdate, ld.startDate);
           }
 
           while(insertionDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(insertionDate, TimeHelper.todayDate)){
-            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate,ld.amount));
+            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate, ld.amount));
             ld.setLatestUpdateDate(insertionDate);
-            await updateDuty(ld);
-            insertionDate = KnoxDateUtil.nextMonth(insertionDate, ld.startDate.day);
+            insertionDate = KnoxDateUtil.nextMonth(insertionDate, ld.startDate);
           }
+
+          await updateDuty(ld);
         }
       }
     }
@@ -133,7 +123,27 @@ class LifeDutyEnforcer {
     List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
 
     for(LifeDuty ld in lifeDutyList){
-      
+      if(KnoxDateUtil.isMoreThanOrIsOneYearDiff(ld.latestUpdate, TimeHelper.todayDate, ld.startDate)){
+        if(ld.startDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(ld.startDate, TimeHelper.todayDate)){
+          DateTime insertionDate;
+
+          //First time insert
+          if(DateUtils.isSameDay(ld.latestUpdate, TimeHelper.stoneAge)){
+            insertionDate = ld.startDate;
+          }
+          else{
+            insertionDate = KnoxDateUtil.nextYear(ld.latestUpdate, ld.startDate);
+          }
+
+          while(insertionDate.isBefore(TimeHelper.todayDate) || DateUtils.isSameDay(insertionDate, TimeHelper.todayDate)){
+            await FinanceRecordKeeper.insertNew(FinanceRecord.toInsertObject(ld.type, ld.tag, insertionDate, ld.amount));
+            ld.setLatestUpdateDate(insertionDate);
+            insertionDate = KnoxDateUtil.nextYear(insertionDate, ld.startDate);
+          }
+
+          await updateDuty(ld);
+        }
+      }
     }
   }
 

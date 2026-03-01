@@ -19,7 +19,7 @@ class LifeDuty {
       updateInterval: updateInterval, 
       amount: amount,
       startDate: DateUtils.dateOnly(startDate),
-      latestUpdate: DateUtils.dateOnly(DateTime.parse(TimeHelper.lowTimeString))
+      latestUpdate: DateUtils.dateOnly(TimeHelper.stoneAge)
     );
   }
 
