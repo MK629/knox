@@ -26,7 +26,7 @@ class DbAccountant {
     return await _db?.query(tableName);
   }
 
-  static Future<void> deleteFromTable(int id, String tableName) async {
+  static Future<void> deleteFromTable(int? id, String tableName) async {
     _checkValidTableName(tableName);
     checkIfDbNullOrOpen(_db);
     await _db?.delete(tableName, where: 'id = ?', whereArgs: [id]);
