@@ -17,23 +17,24 @@ class FinanceRecordKeeper {
   }
 
   static Future<List<FinanceRecord>> selectThisMonthRecords() async {
-    final db = DbAccountant.getDb;
-    DbAccountant.checkIfDbNullOrOpen(db);
-
     DateTime today = TimeHelper.todayDate;
 
     String datePattern = "${today.year}-${today.month}-%";
 
-    List<Map<String, Object?>>? financeRecordResult = await db?.rawQuery('SELECT * FROM ${TableNames.recTbl} WHERE crt_time LIKE \'$datePattern\';');
+    return await _getFinanceRecordsFromDatePattern(datePattern);
+  }
 
-    if(financeRecordResult == null || financeRecordResult.isEmpty){
-      return [];
+  static Future<List<FinanceRecord>> selectSpecificMonthRecords(int year, int month) async {
+    if(month > 12){
+      throw Exception("${CommonMessages.invalidFormat} month :$month");
     }
 
-    List<FinanceRecord> financeRecordList = financeRecordResult.map((mapFromDb) => FinanceRecord.fromMap(mapFromDb)).toList();
+    String datePattern = "$year-$month-%";
 
-    return financeRecordList;
+    return await _getFinanceRecordsFromDatePattern(datePattern);
   }
+
+  //TODO: Maybe a min and max date fetch here for calendar rendering when user has to select a date for financial record viewing?
   
   static Future<void> insertNewRecord(FinanceRecord financeRecord) async {
     final db = DbAccountant.getDb;
@@ -51,5 +52,21 @@ class FinanceRecordKeeper {
 
   static Future<void> deleteRecord(FinanceRecord financeRecord) async {
     await DbAccountant.deleteFromTable(financeRecord.id, TableNames.recTbl);
+  }
+
+  //===============[ Private internal ]===============
+  static Future<List<FinanceRecord>> _getFinanceRecordsFromDatePattern(String datePattern) async {
+    final db = DbAccountant.getDb;
+    DbAccountant.checkIfDbNullOrOpen(db);
+
+    List<Map<String, Object?>>? financeRecordResult = await db?.rawQuery('SELECT * FROM ${TableNames.recTbl} WHERE crt_time LIKE \'$datePattern\';');
+
+    if(financeRecordResult == null || financeRecordResult.isEmpty){
+      return [];
+    }
+
+    List<FinanceRecord> financeRecordList = financeRecordResult.map((mapFromDb) => FinanceRecord.fromMap(mapFromDb)).toList();
+
+    return financeRecordList;
   }
 }

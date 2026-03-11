@@ -40,6 +40,7 @@ enum UpdateInterval{
 
 class CommonMessages{
   static final String resultNull = "Result returned null.";
+  static final String invalidFormat = "Invalid format.";
 }
 
 class TimeHelper{
