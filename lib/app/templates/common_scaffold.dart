@@ -7,13 +7,15 @@ class CommonScaffold extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Knox"),
-        centerTitle: true
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Knox"),
+          centerTitle: true
+        ),
+        body: widget,
+        drawer: KnoxNavigationDrawer(),
       ),
-      body: SafeArea(child: widget),
-      drawer: KnoxNavigationDrawer(),
     );
   }
 }
