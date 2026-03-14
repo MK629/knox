@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:knox/app/components/app_drawer.dart';
 
 class CommonScaffold extends StatelessWidget {
-  final Widget page;
-  const CommonScaffold({super.key, required this.page});
+  final Widget widget;
+  const CommonScaffold({super.key, required this.widget});
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: page,
+      appBar: AppBar(
+        title: Text("Knox"),
+        centerTitle: true
+      ),
+      body: SafeArea(child: widget),
+      drawer: KnoxNavigationDrawer(),
     );
   }
 }
