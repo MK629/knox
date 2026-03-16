@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:knox/app/templates/common_scaffold.dart';
 
 class Home extends StatelessWidget {
-  const Home({ super.key });
+  const Home({super.key});
 
   @override
-  Widget build(BuildContext context){
-    return CommonScaffold(
-      widget: Text("Home Page"),
-    );
+  Widget build(BuildContext context) {
+    return Text("Home Page");
   }
 }

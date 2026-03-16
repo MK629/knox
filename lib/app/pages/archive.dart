@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:knox/app/templates/common_scaffold.dart';
 
 class Archive extends StatelessWidget {
-const Archive({ Key? key }) : super(key: key);
+  const Archive({super.key});
 
   @override
-  Widget build(BuildContext context){
-    return CommonScaffold(
-      widget: Text("Archive") 
-    );
+  Widget build(BuildContext context) {
+    return Text("Archive");
   }
 }
