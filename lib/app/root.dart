@@ -18,23 +18,17 @@ class Root extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => Preferences(prefs)),
         ChangeNotifierProvider(create: (_) => NavigationPointer()),
       ],
-      child: const KnoxApp(),
-    );
-  }
-}
-
-class KnoxApp extends StatelessWidget {
-  const KnoxApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final preferences = context.watch<Preferences>();
-
-    return MaterialApp(
-      home: KnoxScaffold(firstPage: Home()),
-      themeMode: preferences.darkMode ? ThemeMode.dark : ThemeMode.light,
-      darkTheme: darkTheme(),
-      theme: lightTheme(),
+      child: Builder(
+        builder: (context){
+          final preferences = context.watch<Preferences>();
+          return MaterialApp(
+            home: KnoxScaffold(firstPage: Home()),
+            themeMode: preferences.darkMode ? ThemeMode.dark : ThemeMode.light,
+            darkTheme: darkTheme(),
+            theme: lightTheme(),
+          );
+        },
+      ),
     );
   }
 }

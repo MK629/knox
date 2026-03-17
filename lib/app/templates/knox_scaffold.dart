@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knox/app/components/knox_nav_drawer.dart';
+import 'package:knox/app/contexts/global_keys.dart';
 
 class KnoxScaffold extends StatelessWidget {
   final Widget firstPage;
@@ -23,7 +24,7 @@ class KnoxScaffold extends StatelessWidget {
         centerTitle: true,
       ),
       body: Navigator(
-        key: knoxNavKey,
+        key: knoxNavigationKey,
         onGenerateRoute: (settings){
           return MaterialPageRoute(builder: (context) => firstPage);
         },

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:knox/app/contexts/global_keys.dart';
 import 'package:knox/app/contexts/navigation_pointer.dart';
 import 'package:knox/app/pages/archive.dart';
 import 'package:knox/app/pages/home.dart';
 import 'package:knox/app/pages/recurrings.dart';
 import 'package:knox/app/pages/settings.dart';
 import 'package:provider/provider.dart';
-
-final knoxNavKey = GlobalKey<NavigatorState>();
 
 class KnoxNavigationDrawer extends StatelessWidget {
   const KnoxNavigationDrawer({super.key});
@@ -26,7 +25,7 @@ class KnoxNavigationDrawer extends StatelessWidget {
       ],
       onDestinationSelected: (value) {
         Scaffold.of(context).closeDrawer();
-        knoxNavKey.currentState!.pushReplacement(MaterialPageRoute(builder: (context) => buildPage(value)));
+        knoxNavigationKey.currentState!.pushReplacement(MaterialPageRoute(builder: (context) => buildPage(value)));
         navPointer.setCurrentIndex(value);
       },
     );
