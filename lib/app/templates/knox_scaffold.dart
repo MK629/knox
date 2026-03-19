@@ -8,28 +8,28 @@ class KnoxScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: Icon(Icons.menu_open_outlined),
-              onPressed: () {
-                Scaffold.of(context).openDrawer();
-              },
-            );
-          }
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: Builder(
+            builder: (context) {
+              return IconButton(
+                icon: Icon(Icons.menu_open_outlined),
+                onPressed: () {
+                  Scaffold.of(context).openDrawer();
+                },
+              );
+            }
+          ),
         ),
-        title: Text("Knox"),
-        centerTitle: true,
+        body: Navigator(
+          key: knoxNavigationKey,
+          onGenerateRoute: (settings){
+            return MaterialPageRoute(builder: (context) => firstPage);
+          },
+        ),
+        drawer: KnoxNavigationDrawer(),
       ),
-      body: Navigator(
-        key: knoxNavigationKey,
-        onGenerateRoute: (settings){
-          return MaterialPageRoute(builder: (context) => firstPage);
-        },
-      ),
-      drawer: KnoxNavigationDrawer(),
     );
   }
 }

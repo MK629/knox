@@ -11,9 +11,9 @@ class Settings extends StatelessWidget {
 
     return ListView(
       children: [
-        Divider(),
-        _makeCommonSettingsTile("App theme", _themeModeToggleButton(preferences)),
-        Divider()
+        SizedBox(height: 6),
+        _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences)),
+        _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences)),
       ],
     );
   }
@@ -27,7 +27,9 @@ Widget _themeModeToggleButton(Preferences preferences) {
     color: darkMode ? Colors.black : Colors.white,
     style: ButtonStyle(
       alignment: Alignment.center,
-      backgroundColor: WidgetStatePropertyAll(darkMode ? Colors.white : Colors.black),
+      backgroundColor: WidgetStatePropertyAll(
+        darkMode ? Colors.white : Colors.black,
+      ),
     ),
     onPressed: () {
       preferences.toggleDarkMode();
@@ -35,15 +37,21 @@ Widget _themeModeToggleButton(Preferences preferences) {
   );
 }
 
-ListTile _makeCommonSettingsTile(String label, Widget trigger) {
-  return ListTile(
-    leading: Text(
-      label,
-      textAlign: TextAlign.center,
-      style: TextStyle(
-        fontSize: 14
+Column _makeCommonSettingsOption(String label, Widget trigger) {
+  return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 4, right: 4),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(label),
+            trigger
+          ],
+        ),
       ),
-    ),
-    trailing: trigger,
+      Divider()
+    ]
   );
 }

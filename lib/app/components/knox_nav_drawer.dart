@@ -18,10 +18,12 @@ class KnoxNavigationDrawer extends StatelessWidget {
     return NavigationDrawer(
       selectedIndex: selIndex,
       children: [
+        SizedBox(height: 8,),
         NavigationDrawerDestination(icon: Icon(Icons.house), label: Text("Home")),
         NavigationDrawerDestination(icon: Icon(Icons.repeat), label: Text("Recurrings")),
         NavigationDrawerDestination(icon: Icon(Icons.book), label: Text("Archive")),
         NavigationDrawerDestination(icon: Icon(Icons.settings), label: Text("Settings")),
+        SizedBox(height: 8,),
       ],
       onDestinationSelected: (value) {
         Scaffold.of(context).closeDrawer();
