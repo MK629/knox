@@ -7,7 +7,7 @@ class DbAccountant {
 
   static Database? get getDb => _db;
 
-  static void initDb() async {
+  static Future<void> initDb() async {
     String databasesPath = await getDatabasesPath();
 
     _db = await openDatabase(

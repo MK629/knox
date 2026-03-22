@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:knox/app/root.dart';
+import 'package:knox/db/functions/db_accountant.dart';
 import 'package:knox/hive/worker_bee.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await DbAccountant.initDb();
 
   await WorkerBee.init();
   Map<dynamic, dynamic> prefs = await WorkerBee.getAllItems();
