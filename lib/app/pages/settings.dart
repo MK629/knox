@@ -13,7 +13,6 @@ class Settings extends StatelessWidget {
       children: [
         SizedBox(height: 6),
         _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences)),
-        _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences)),
       ],
     );
   }
@@ -22,22 +21,21 @@ class Settings extends StatelessWidget {
 Widget _themeModeToggleButton(Preferences preferences) {
   bool darkMode = preferences.darkMode;
 
-  return IconButton(
-    icon: Icon(darkMode ? Icons.light_mode : Icons.dark_mode),
-    color: darkMode ? Colors.black : Colors.white,
-    style: ButtonStyle(
-      alignment: Alignment.center,
-      backgroundColor: WidgetStatePropertyAll(
-        darkMode ? Colors.white : Colors.black,
-      ),
-    ),
-    onPressed: () {
-      preferences.toggleDarkMode();
+  return ToggleButtons(
+    isSelected: [!darkMode, darkMode],
+    onPressed: (index){
+      if(index == 0){
+        preferences.toggleDarkMode(false);
+      }
+      else if(index == 1){
+        preferences.toggleDarkMode(true);
+      }
     },
+    children: [Icon(Icons.light_mode), Icon(Icons.dark_mode)],
   );
 }
 
-Column _makeCommonSettingsOption(String label, Widget trigger) {
+Column _makeCommonSettingsOption(String label, Widget triggerWidget) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -47,7 +45,7 @@ Column _makeCommonSettingsOption(String label, Widget trigger) {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(label),
-            trigger
+            triggerWidget
           ],
         ),
       ),

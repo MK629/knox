@@ -15,12 +15,18 @@ class KnoxScaffold extends StatelessWidget {
             builder: (context) {
               return IconButton(
                 icon: Icon(Icons.menu_open_outlined),
+                style: ButtonStyle(
+                  iconColor: WidgetStatePropertyAll(Theme.of(context).appBarTheme.foregroundColor),
+                  backgroundColor: WidgetStatePropertyAll(Theme.of(context).appBarTheme.backgroundColor),
+                ),
                 onPressed: () {
                   Scaffold.of(context).openDrawer();
                 },
               );
             }
           ),
+          title: Text("KNOX"),
+          centerTitle: true,
         ),
         body: Navigator(
           key: knoxNavigationKey,

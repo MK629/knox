@@ -20,8 +20,11 @@ class KnoxNavigationDrawer extends StatelessWidget {
       children: [
         SizedBox(height: 8,),
         NavigationDrawerDestination(icon: Icon(Icons.house), label: Text("Home")),
+        SizedBox(height: 8,),
         NavigationDrawerDestination(icon: Icon(Icons.repeat), label: Text("Recurrings")),
+        SizedBox(height: 8,),
         NavigationDrawerDestination(icon: Icon(Icons.book), label: Text("Archive")),
+        SizedBox(height: 8,),
         NavigationDrawerDestination(icon: Icon(Icons.settings), label: Text("Settings")),
         SizedBox(height: 8,),
       ],

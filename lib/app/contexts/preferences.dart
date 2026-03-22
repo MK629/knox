@@ -9,8 +9,8 @@ class Preferences extends ChangeNotifier {
     _darkMode = prefs[PrefKeys.darkMode] as bool? ?? false;
   }
 
-  void toggleDarkMode() async {
-    _darkMode = !_darkMode;
+  void toggleDarkMode(bool boolean) async {
+    _darkMode = boolean;
     await WorkerBee.addOrUpdateItem(PrefKeys.darkMode, _darkMode);
     notifyListeners();
   }
