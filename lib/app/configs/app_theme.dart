@@ -5,51 +5,68 @@ ThemeData lightTheme() {
     colorScheme: ColorScheme(
       brightness: Brightness.light,
       primary: lightColor1,
-      onPrimary: lightColor2,
-      secondary:  lightColor2,
+      onPrimary: lightColor6,
+      secondary: lightColor6,
       onSecondary: lightColor1,
-      error: lightColor2,
+      error: lightColor6,
       onError: lightColor1,
       surface: lightColor1,
-      onSurface: lightColor2,
+      onSurface: lightColor6,
     ),
-    textTheme: sharedTextTheme(),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.5,
+      ),
+
+      headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+
+      titleLarge: TextStyle(color: lightColor6, fontSize: 20, fontWeight: FontWeight.w600),
+
+      titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+
+      bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+
+      bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+
+      labelLarge: TextStyle(
+        color: lightColor6,
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+
+      labelSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    ),
     appBarTheme: AppBarTheme(
-      backgroundColor: lightColor2,
+      backgroundColor: lightColor6,
       foregroundColor: lightColor1,
       toolbarHeight: 65,
     ),
     buttonTheme: ButtonThemeData(),
     iconButtonTheme: IconButtonThemeData(
       style: ButtonStyle(
-        backgroundColor: WidgetStatePropertyAll(lightColor2),
+        backgroundColor: WidgetStatePropertyAll(lightColor6),
         foregroundColor: WidgetStatePropertyAll(lightColor1),
         splashFactory: NoSplash.splashFactory,
-      )
+      ),
     ),
     toggleButtonsTheme: ToggleButtonsThemeData(
-      color: lightColor2,
+      color: lightColor6,
       selectedColor: lightColor1,
-      fillColor: lightColor2,
+      fillColor: lightColor6,
       borderRadius: BorderRadius.all(Radius.circular(30)),
-      borderColor: lightColor2,
-      selectedBorderColor: lightColor2,
+      borderColor: lightColor6,
+      selectedBorderColor: lightColor6,
     ),
     cardTheme: CardThemeData(
-      color: commonColor4,
-      elevation: 0.0,
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: commonColor6,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(12))
-      )
+        side: BorderSide(color: lightColor6, width: 1.5),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
     ),
     drawerTheme: shardDrawerTheme(),
-    dividerTheme: DividerThemeData(
-      color: lightColor2,
-      thickness: 0.75
-    )
+    dividerTheme: DividerThemeData(color: lightColor6, thickness: 0.75),
   );
 }
 
@@ -59,14 +76,37 @@ ThemeData darkTheme() {
       brightness: Brightness.dark,
       primary: darkColor1,
       onPrimary: darkColor2,
-      secondary:  darkColor2,
+      secondary: darkColor2,
       onSecondary: darkColor1,
       error: darkColor2,
       onError: darkColor1,
       surface: darkColor1,
       onSurface: darkColor2,
     ),
-    textTheme: sharedTextTheme(),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        letterSpacing: -0.5,
+      ),
+
+      headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+
+      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+
+      titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+
+      bodyLarge: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
+
+      bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
+
+      labelLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+
+      labelSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+    ),
     appBarTheme: AppBarTheme(
       backgroundColor: darkColor1,
       foregroundColor: darkColor2,
@@ -79,7 +119,7 @@ ThemeData darkTheme() {
         backgroundColor: WidgetStatePropertyAll(darkColor2),
         foregroundColor: WidgetStatePropertyAll(darkColor1),
         splashFactory: NoSplash.splashFactory,
-      )
+      ),
     ),
     toggleButtonsTheme: ToggleButtonsThemeData(
       color: darkColor2,
@@ -90,20 +130,14 @@ ThemeData darkTheme() {
       selectedBorderColor: darkColor2,
     ),
     cardTheme: CardThemeData(
-      color: darkColor1,
       elevation: 0.0,
       shape: RoundedRectangleBorder(
-        side: BorderSide(
-          color: darkColor2,
-        ),
-        borderRadius: BorderRadius.all(Radius.circular(12))
-      )
+        side: BorderSide(color: darkColor2),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
     ),
     drawerTheme: shardDrawerTheme(),
-    dividerTheme: DividerThemeData(
-      color: darkColor2,
-      thickness: 0.75
-    )
+    dividerTheme: DividerThemeData(color: darkColor2, thickness: 0.75),
   );
 }
 
@@ -111,63 +145,22 @@ DrawerThemeData shardDrawerTheme() {
   return DrawerThemeData(width: 200);
 }
 
-TextTheme sharedTextTheme() {
-  return TextTheme(
-    displayLarge: TextStyle(
-      fontSize: 32,
-      fontWeight: FontWeight.bold,
-      letterSpacing: -0.5,
-    ),
-
-    headlineMedium: TextStyle(
-      fontSize: 24,
-      fontWeight: FontWeight.w600,
-    ),
-
-    titleLarge: TextStyle(
-      fontSize: 20,
-      fontWeight: FontWeight.w600,
-    ),
-
-    titleMedium: TextStyle(
-      fontSize: 18,
-      fontWeight: FontWeight.w500,
-    ),
-
-    bodyLarge: TextStyle(
-      fontSize: 16,
-      fontWeight: FontWeight.normal,
-    ),
-
-    bodyMedium: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.normal,
-    ),
-
-    labelLarge: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 0.3,
-    ),
-
-    labelSmall: TextStyle(
-      fontSize: 12,
-    ),
-  );
-}
-
 //=============[ Light colours ]=============
 Color lightColor1 = Color(0xFFFCF8F8);
-Color lightColor2 =  Color(0xFFAB5757);
+Color lightColor2 = Color(0xFFC84B31);
+Color lightColor3 = Color(0xFFECDBBA);
+Color lightColor4 = Color(0xFF191919);
+Color lightColor5 = Color(0xFF4FA095);
+Color lightColor6 = Color(0xFF2D4263);
 
 //=============[ Dark colours ]=============
-Color darkColor1 = Color(0xFF21243D);
+Color darkColor1 = Color(0xFF191919);
 Color darkColor2 = Color(0xFFFCF8F8);
 
 //=============[ Common colours ]=============
 Color commonColor1 = Color(0xFF88E1F2);
 Color commonColor2 = Color(0xFFFFD082);
 Color commonColor3 = Color(0xFFFF7C7C);
-Color commonColor4  = Color(0xFFFBEFEF);
+Color commonColor4 = Color(0xFFFBEFEF);
 Color commonColor5 = Color(0xFFF9DFDF);
 Color commonColor6 = Color(0xFFF5AFAF);

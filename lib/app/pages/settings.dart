@@ -12,7 +12,7 @@ class Settings extends StatelessWidget {
     return ListView(
       children: [
         SizedBox(height: 6),
-        _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences)),
+        _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences), context),
       ],
     );
   }
@@ -35,7 +35,7 @@ Widget _themeModeToggleButton(Preferences preferences) {
   );
 }
 
-Column _makeCommonSettingsOption(String label, Widget triggerWidget) {
+Column _makeCommonSettingsOption(String label, Widget triggerWidget, BuildContext context) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [
@@ -44,7 +44,7 @@ Column _makeCommonSettingsOption(String label, Widget triggerWidget) {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label),
+            Text(label, style: Theme.of(context).textTheme.labelSmall),
             triggerWidget
           ],
         ),
