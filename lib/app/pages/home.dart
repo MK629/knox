@@ -20,6 +20,12 @@ class _HomeState extends State<Home> {
     thisMonthRecords = FinanceRecordKeeper.selectThisMonthRecords();
   }
 
+  void refetch() {
+    setState(() {
+      thisMonthRecords = FinanceRecordKeeper.selectThisMonthRecords();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -34,9 +40,9 @@ class _HomeState extends State<Home> {
           FutureBuilder(
             future: thisMonthRecords,
             builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return CircularProgressIndicator();
-              }
+              // if (snapshot.connectionState == ConnectionState.waiting) {
+              //   return CircularProgressIndicator();
+              // }
 
               List<FinanceRecord> items = snapshot.hasData
                   ? snapshot.data as List<FinanceRecord>
@@ -57,8 +63,8 @@ class _HomeState extends State<Home> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CashFlowCard(totalSum: totalSum),
-                    IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList()),
-                    ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList())
+                    IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList(), callbackAction: refetch,),
+                    ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList(), callbackAction: refetch,)
                   ],
                 ),
               );
@@ -78,18 +84,15 @@ class CashFlowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = totalSum >= 0 ? lightColor5 : lightColor2;
+    Color textColor = totalSum >= 0 ? greenColor : redColor;
 
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Text(
-              "Cash Flow",
-              style: Theme.of(context).textTheme.labelLarge
-            ),
-            const SizedBox(height: 20),
+            cardLabelText("Cash Flow", Icons.payments_outlined, context),
+            const SizedBox(height: 10),
             Text(
               totalSum >= 0 ? "+$totalSum" : "-$totalSum",
               style: TextStyle(
@@ -108,26 +111,42 @@ class CashFlowCard extends StatelessWidget {
 //Income display card
 class IncomeDisplayCard extends StatelessWidget {
   final List<FinanceRecord> incomes;
+  final VoidCallback callbackAction;
 
   const IncomeDisplayCard({
     super.key,
-    required this.incomes
+    required this.incomes,
+    required this.callbackAction
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: lightColor5),
+        side: BorderSide(color: greenColor),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Incomes",
-              style: Theme.of(context).textTheme.labelLarge
+            cardLabelText("Income", Icons.insert_chart_outlined, context),
+            Container(
+              height: 170,
+            ),
+            IconButton(
+              icon: Icon(Icons.post_add_outlined),
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                )
+              ),
+              onPressed: (){
+                callbackAction();
+              },
             )
           ]
         ),
@@ -139,30 +158,68 @@ class IncomeDisplayCard extends StatelessWidget {
 //Expense display card
 class ExpenseDisplayCard extends StatelessWidget {
   final List<FinanceRecord> expenses;
+  final VoidCallback callbackAction;
 
   const ExpenseDisplayCard({
     super.key,
-    required this.expenses
+    required this.expenses,
+    required this.callbackAction
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       shape: RoundedRectangleBorder(
-        side: BorderSide(color: lightColor2),
+        side: BorderSide(color: redColor),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              "Expenses",
-              style: Theme.of(context).textTheme.labelLarge
+            cardLabelText("Expenses", Icons.payment_outlined, context),
+            Container(
+              height: 170,
+            ),
+            IconButton(
+              icon: Icon(Icons.post_add_outlined),
+              style: ButtonStyle(
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                  ),
+                )
+              ),
+              onPressed: (){
+                callbackAction();
+              },
             )
           ]
         ),
       ),
     );
   }
+}
+
+Text cardLabelText(String label, IconData labelIcon, BuildContext context){
+  return Text.rich(
+    textAlign: TextAlign.center,
+    TextSpan(
+      style: Theme.of(context).textTheme.labelLarge,
+      children: [
+        TextSpan(text: label),
+        WidgetSpan(
+          child: SizedBox(width: 4,)
+        ),
+        WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Icon(
+            labelIcon,
+            color: Theme.of(context).textTheme.labelLarge?.color,
+          )
+        )
+      ]
+    )
+  );
 }
