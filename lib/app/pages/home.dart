@@ -59,13 +59,33 @@ class _HomeState extends State<Home> {
               }
 
               return Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Stack(
                   children: [
-                    CashFlowCard(totalSum: totalSum),
-                    IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList(), callbackAction: refetch,),
-                    ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList(), callbackAction: refetch,)
-                  ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CashFlowCard(totalSum: totalSum),
+                        IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList()),
+                        ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList()),
+                      ],
+                    ),
+                    Positioned(
+                      bottom: 4,
+                      right: 16,
+                      child: FloatingActionButton(
+                        child: Icon(Icons.post_add_outlined),
+                        onPressed: () {
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (context){
+                              return Text("TextField here");
+                            }
+                          );
+                          refetch();
+                        },
+                      ),
+                    )
+                  ]
                 ),
               );
             },
@@ -97,8 +117,8 @@ class CashFlowCard extends StatelessWidget {
               totalSum >= 0 ? "+$totalSum" : "-$totalSum",
               style: TextStyle(
                 color: textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
@@ -111,12 +131,10 @@ class CashFlowCard extends StatelessWidget {
 //Income display card
 class IncomeDisplayCard extends StatelessWidget {
   final List<FinanceRecord> incomes;
-  final VoidCallback callbackAction;
 
   const IncomeDisplayCard({
     super.key,
-    required this.incomes,
-    required this.callbackAction
+    required this.incomes
   });
 
   @override
@@ -133,20 +151,7 @@ class IncomeDisplayCard extends StatelessWidget {
           children: [
             cardLabelText("Income", Icons.insert_chart_outlined, context),
             Container(
-              height: 170,
-            ),
-            IconButton(
-              icon: Icon(Icons.post_add_outlined),
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                )
-              ),
-              onPressed: (){
-                callbackAction();
-              },
+              height: 200,
             )
           ]
         ),
@@ -158,12 +163,10 @@ class IncomeDisplayCard extends StatelessWidget {
 //Expense display card
 class ExpenseDisplayCard extends StatelessWidget {
   final List<FinanceRecord> expenses;
-  final VoidCallback callbackAction;
 
   const ExpenseDisplayCard({
     super.key,
-    required this.expenses,
-    required this.callbackAction
+    required this.expenses
   });
 
   @override
@@ -180,21 +183,8 @@ class ExpenseDisplayCard extends StatelessWidget {
           children: [
             cardLabelText("Expenses", Icons.payment_outlined, context),
             Container(
-              height: 170,
+              height: 200,
             ),
-            IconButton(
-              icon: Icon(Icons.post_add_outlined),
-              style: ButtonStyle(
-                shape: WidgetStatePropertyAll(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(12)),
-                  ),
-                )
-              ),
-              onPressed: (){
-                callbackAction();
-              },
-            )
           ]
         ),
       ),

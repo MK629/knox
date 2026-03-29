@@ -48,8 +48,11 @@ ThemeData lightTheme() {
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(lightColor2),
         foregroundColor: WidgetStatePropertyAll(lightColor1),
-        splashFactory: NoSplash.splashFactory,
       ),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: lightColor2,
+      foregroundColor: lightColor1
     ),
     toggleButtonsTheme: ToggleButtonsThemeData(
       color: lightColor2,
@@ -118,8 +121,11 @@ ThemeData darkTheme() {
       style: ButtonStyle(
         backgroundColor: WidgetStatePropertyAll(darkColor2),
         foregroundColor: WidgetStatePropertyAll(darkColor1),
-        splashFactory: NoSplash.splashFactory,
       ),
+    ),
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
+      backgroundColor: darkColor2,
+      foregroundColor: darkColor1
     ),
     toggleButtonsTheme: ToggleButtonsThemeData(
       color: darkColor2,
