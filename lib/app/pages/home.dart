@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:knox/app/components/record_input_form.dart';
 import 'package:knox/app/configs/app_theme.dart';
 import 'package:knox/db/constants.dart';
 import 'package:knox/db/entities/finance_record.dart';
@@ -44,9 +45,7 @@ class _HomeState extends State<Home> {
               //   return CircularProgressIndicator();
               // }
 
-              List<FinanceRecord> items = snapshot.hasData
-                  ? snapshot.data as List<FinanceRecord>
-                  : [];
+              List<FinanceRecord> items = snapshot.hasData ? snapshot.data as List<FinanceRecord> : [];
 
               double totalSum = 0;
 
@@ -74,12 +73,12 @@ class _HomeState extends State<Home> {
                       right: 16,
                       child: FloatingActionButton(
                         child: Icon(Icons.post_add_outlined),
-                        onPressed: () {
-                          showModalBottomSheet(
+                        onPressed: () async {
+                          await showModalBottomSheet(
                             context: context,
                             builder: (context){
-                              return Text("TextField here");
-                            }
+                              return RecordInputForm();
+                            },
                           );
                           refetch();
                         },
@@ -192,6 +191,7 @@ class ExpenseDisplayCard extends StatelessWidget {
   }
 }
 
+//Card label text formatted with icon
 Text cardLabelText(String label, IconData labelIcon, BuildContext context){
   return Text.rich(
     textAlign: TextAlign.center,
