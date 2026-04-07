@@ -46,7 +46,7 @@ class DbAccountant {
   }
 
   static void _checkValidTableName(String table){
-    if(table != TableNames.lifeDutyTbl || table != TableNames.recTbl){
+    if(table != TableNames.lifeDutyTbl && table != TableNames.recTbl){
       throw Exception("Invalid table name. Write either [${TableNames.lifeDutyTbl}] or [${TableNames.recTbl}].");
     }
   }

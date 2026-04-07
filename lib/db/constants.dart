@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class Queries {
   static final String createRecordTable =
-      '''
+  '''
     CREATE TABLE IF NOT EXISTS ${TableNames.recTbl} (
       id INTEGER PRIMARY KEY,
       type TEXT NOT NULL,
@@ -14,7 +14,7 @@ class Queries {
   ''';
 
   static final String createLifeDutyTable =
-      '''
+  '''
     CREATE TABLE IF NOT EXISTS ${TableNames.lifeDutyTbl} (
       id INTEGER PRIMARY KEY,
       type TEXT NOT NULL,

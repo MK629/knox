@@ -41,9 +41,9 @@ class _HomeState extends State<Home> {
           FutureBuilder(
             future: thisMonthRecords,
             builder: (context, snapshot) {
-              // if (snapshot.connectionState == ConnectionState.waiting) {
-              //   return CircularProgressIndicator();
-              // }
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
 
               List<FinanceRecord> items = snapshot.hasData ? snapshot.data as List<FinanceRecord> : [];
 
@@ -75,6 +75,7 @@ class _HomeState extends State<Home> {
                         child: Icon(Icons.post_add_outlined),
                         onPressed: () async {
                           await showModalBottomSheet(
+                            isScrollControlled: true,
                             context: context,
                             builder: (context){
                               return RecordInputForm();
@@ -113,7 +114,7 @@ class CashFlowCard extends StatelessWidget {
             cardLabelText("Cash Flow", Icons.payments_outlined, context),
             const SizedBox(height: 10),
             Text(
-              totalSum >= 0 ? "+$totalSum" : "-$totalSum",
+              totalSum >= 0 ? "+$totalSum" : "$totalSum",
               style: TextStyle(
                 color: textColor,
                 fontSize: 20,

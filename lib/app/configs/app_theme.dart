@@ -68,6 +68,40 @@ ThemeData lightTheme() {
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     ),
+    inputDecorationTheme: InputDecorationTheme(
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      labelStyle: TextStyle(
+        color: lightColor2,
+        fontWeight: FontWeight.w500,
+      ),
+      floatingLabelStyle: TextStyle(
+        color: lightColor2,
+        fontWeight: FontWeight.w500,
+      ),
+      focusColor: lightColor2,
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: lightColor2,
+          width: 1
+        )
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: lightColor2,
+          width: 1
+        )
+      ),
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: lightColor2,
+      selectionColor: lightColor2.withValues(alpha: 0.3),
+      selectionHandleColor: lightColor2,
+    ),
     drawerTheme: shardDrawerTheme(),
     dividerTheme: DividerThemeData(color: lightColor2, thickness: 0.75),
   );
@@ -141,6 +175,40 @@ ThemeData darkTheme() {
         side: BorderSide(color: darkColor2),
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 12,
+        vertical: 8,
+      ),
+      labelStyle: TextStyle(
+        color: darkColor2,
+        fontWeight: FontWeight.w500,
+      ),
+      floatingLabelStyle: TextStyle(
+        color: darkColor2,
+        fontWeight: FontWeight.w500,
+      ),
+      focusColor: darkColor2,
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: darkColor2,
+          width: 1
+        )
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: darkColor2,
+          width: 1
+        )
+      ),
+    ),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: darkColor2,
+      selectionColor: darkColor2.withValues(alpha: 0.3),
+      selectionHandleColor: darkColor2,
     ),
     drawerTheme: shardDrawerTheme(),
     dividerTheme: DividerThemeData(color: darkColor2, thickness: 0.75),

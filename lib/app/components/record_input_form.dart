@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:knox/db/constants.dart';
+import 'package:knox/db/entities/finance_record.dart';
+import 'package:knox/db/functions/finance_record_keeper.dart';
 
 class RecordInputForm extends StatefulWidget {
   const RecordInputForm({super.key});
@@ -11,12 +14,14 @@ class RecordInputForm extends StatefulWidget {
 class _RecordInputFormState extends State<RecordInputForm> {
   late RecordType recordType;
   late TextEditingController tagController;
+  late TextEditingController amountController;
 
   @override
   void initState() {
     super.initState();
     recordType = RecordType.income;
     tagController = TextEditingController();
+    amountController = TextEditingController();
   }
 
   @override
@@ -25,6 +30,7 @@ class _RecordInputFormState extends State<RecordInputForm> {
       padding: const EdgeInsets.all(12.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
+        spacing: 12,
         children: [
           Container(
             alignment: Alignment.center,
@@ -45,19 +51,54 @@ class _RecordInputFormState extends State<RecordInputForm> {
               },
             ),
           ),
-          Row(
-            children: [
-              Text("Tag"),
-              Expanded(child: TextField()),
-            ],
+          TextFormField(
+            decoration: InputDecoration(labelText: "Tag"),
+            controller: tagController,
           ),
-          Text("Amount"),
-          IconButton(
-            alignment: Alignment.bottomCenter,
-            icon: Icon(Icons.post_add_outlined),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+          TextFormField(
+            decoration: InputDecoration(labelText: "Amount"),
+            keyboardType: TextInputType.number,
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+            ],
+            controller: amountController,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              IconButton(
+                style: inputFormButtonStyle(),
+                icon: Icon(Icons.close_outlined),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              IconButton(
+                style: inputFormButtonStyle(),
+                icon: Icon(Icons.post_add_outlined),
+                onPressed: () async {
+                  final tagInputStr = tagController.text;
+                  final amountInputStr = amountController.text;
+                  if (tagInputStr.isEmpty || amountInputStr.isEmpty) {
+                    return;
+                  }
+
+                  FinanceRecord insertReadyFinanceRecord = FinanceRecord.toInsertObject(
+                    recordType,
+                    tagInputStr,
+                    DateTime.now(),
+                    double.tryParse(amountInputStr) as double
+                  );
+
+                  await FinanceRecordKeeper.insertNewRecord(insertReadyFinanceRecord);
+
+                  //Complier complains if I don't do this. Will investigate later.
+                  if(context.mounted){
+                    Navigator.pop(context);
+                  }
+                },
+              ),
+            ],
           ),
         ],
       ),
@@ -70,7 +111,7 @@ Padding typeToggleButtonItem(String label, IconData labelIcon) {
     padding: const EdgeInsets.all(8.0),
     child: Text.rich(
       textAlign: TextAlign.center,
-      style: TextStyle(),
+      style: TextStyle(fontWeight: FontWeight.w600),
       TextSpan(
         children: [
           TextSpan(text: label),
@@ -80,6 +121,17 @@ Padding typeToggleButtonItem(String label, IconData labelIcon) {
             child: Icon(labelIcon),
           ),
         ],
+      ),
+    ),
+  );
+}
+
+ButtonStyle inputFormButtonStyle() {
+  return ButtonStyle(
+    padding: WidgetStatePropertyAll(EdgeInsets.all(14)),
+    shape: WidgetStatePropertyAll(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
       ),
     ),
   );
