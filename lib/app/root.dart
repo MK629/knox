@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:knox/app/configs/app_theme.dart';
 import 'package:knox/app/contexts/navigation_pointer.dart';
 import 'package:knox/app/contexts/preferences.dart';
-import 'package:knox/app/pages/home.dart';
+import 'package:knox/app/pages/budget_tracker.dart';
 import 'package:knox/app/templates/knox_scaffold.dart';
 import 'package:provider/provider.dart';
 
@@ -22,7 +22,7 @@ class Root extends StatelessWidget {
         builder: (context){
           final preferences = context.watch<Preferences>();
           return MaterialApp(
-            home: KnoxScaffold(firstPage: Home()),
+            home: KnoxScaffold(firstPage: BudgetTracker(monthly: true,)),
             themeMode: preferences.darkMode ? ThemeMode.dark : ThemeMode.light,
             darkTheme: darkTheme(),
             theme: lightTheme(),

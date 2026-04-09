@@ -14,10 +14,10 @@ class KnoxDateUtil {
       month = month - 12;
     }
 
-    if(isMonthFeb(lifeDutyStartDate.month) && 
+    if(isMonthFeb(lifeDutyStartDate.month) &&
       (
-        (isLeapYear(lifeDutyStartDate.year) && lifeDutyStartDate.day == 29) 
-        || 
+        (isLeapYear(lifeDutyStartDate.year) && lifeDutyStartDate.day == 29)
+        ||
         (!isLeapYear(lifeDutyStartDate.year) && lifeDutyStartDate.day == 28)
       )
     ){
@@ -102,5 +102,13 @@ class KnoxDateUtil {
   static bool isMoreThanOrIsOneYearDiff(DateTime lifeDutylatestUpdate, DateTime today, DateTime lifeDutyStartDate){
     DateTime oneYearAfter = nextYear(lifeDutylatestUpdate, lifeDutyStartDate);
     return today.isAfter(oneYearAfter) || DateUtils.isSameDay(oneYearAfter, today);
+  }
+
+  static String noMilliseconds(DateTime datetime){
+    return datetime.toString().split(".")[0];
+  }
+
+  static String noTime(DateTime datetime){
+    return datetime.toString().split(" ")[0];
   }
 }

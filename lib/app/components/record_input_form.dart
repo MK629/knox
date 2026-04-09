@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:knox/app/configs/app_theme.dart';
 import 'package:knox/db/constants.dart';
 import 'package:knox/db/entities/finance_record.dart';
 import 'package:knox/db/functions/finance_record_keeper.dart';
@@ -121,17 +122,6 @@ Padding typeToggleButtonItem(String label, IconData labelIcon) {
             child: Icon(labelIcon),
           ),
         ],
-      ),
-    ),
-  );
-}
-
-ButtonStyle inputFormButtonStyle() {
-  return ButtonStyle(
-    padding: WidgetStatePropertyAll(EdgeInsets.all(14)),
-    shape: WidgetStatePropertyAll(
-      RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(16)),
       ),
     ),
   );

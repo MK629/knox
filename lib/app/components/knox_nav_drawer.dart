@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:knox/app/contexts/global_keys.dart';
 import 'package:knox/app/contexts/navigation_pointer.dart';
 import 'package:knox/app/pages/archive.dart';
-import 'package:knox/app/pages/home.dart';
+import 'package:knox/app/pages/budget_tracker.dart';
 import 'package:knox/app/pages/recurrings.dart';
 import 'package:knox/app/pages/settings.dart';
 import 'package:provider/provider.dart';
@@ -19,13 +19,15 @@ class KnoxNavigationDrawer extends StatelessWidget {
       selectedIndex: selIndex,
       children: [
         SizedBox(height: 8,),
-        NavigationDrawerDestination(icon: Icon(Icons.house), label: Text("Home")),
+        NavigationDrawerDestination(icon: Icon(Icons.calendar_month), label: Text("This Month")),
         SizedBox(height: 8,),
-        NavigationDrawerDestination(icon: Icon(Icons.repeat), label: Text("Recurrings")),
+        NavigationDrawerDestination(icon: Icon(Icons.timelapse_outlined), label: Text("All Time")),
         SizedBox(height: 8,),
-        NavigationDrawerDestination(icon: Icon(Icons.book), label: Text("Archive")),
+        NavigationDrawerDestination(icon: Icon(Icons.timer_rounded), label: Text("Recurrings")),
         SizedBox(height: 8,),
-        NavigationDrawerDestination(icon: Icon(Icons.settings), label: Text("Settings")),
+        NavigationDrawerDestination(icon: Icon(Icons.book_outlined), label: Text("Archive")),
+        SizedBox(height: 8,),
+        NavigationDrawerDestination(icon: Icon(Icons.settings_outlined), label: Text("Settings")),
         SizedBox(height: 8,),
       ],
       onDestinationSelected: (value) {
@@ -40,12 +42,14 @@ class KnoxNavigationDrawer extends StatelessWidget {
 Widget buildPage(int index) {
   switch (index) {
     case 0:
-      return Home();
+      return BudgetTracker(monthly: true,);
     case 1:
-      return Recurrings();
+      return BudgetTracker(monthly: false,);
     case 2:
-      return Archive();
+      return Recurrings();
     case 3:
+      return Archive();
+    case 4:
       return Settings();
     default:
       throw Exception("Index: $index does not exist.");

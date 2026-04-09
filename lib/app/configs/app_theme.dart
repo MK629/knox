@@ -22,7 +22,7 @@ ThemeData lightTheme() {
 
       headlineMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
 
-      titleLarge: TextStyle(color: lightColor2, fontSize: 20, fontWeight: FontWeight.w600),
+      titleLarge: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
 
       titleMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
 
@@ -215,10 +215,6 @@ ThemeData darkTheme() {
   );
 }
 
-DrawerThemeData shardDrawerTheme() {
-  return DrawerThemeData(width: 200);
-}
-
 //=============[ Light colours ]=============
 Color lightColor1 = Color(0xFFFCF8F8);
 Color lightColor2 = Color(0xFF2D4263);
@@ -240,3 +236,21 @@ Color commonColor3 = Color(0xFFFF7C7C);
 Color commonColor4 = Color(0xFFFBEFEF);
 Color commonColor5 = Color(0xFFF9DFDF);
 Color commonColor6 = Color(0xFFF5AFAF);
+
+
+
+//=============[ Reusable style configs ]=============
+DrawerThemeData shardDrawerTheme() {
+  return DrawerThemeData(width: 200);
+}
+
+ButtonStyle inputFormButtonStyle() {
+  return ButtonStyle(
+    padding: WidgetStatePropertyAll(EdgeInsets.all(14)),
+    shape: WidgetStatePropertyAll(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
+    ),
+  );
+}
