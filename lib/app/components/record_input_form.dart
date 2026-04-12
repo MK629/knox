@@ -107,7 +107,7 @@ class _RecordInputFormState extends State<RecordInputForm> {
   }
 }
 
-Padding typeToggleButtonItem(String label, IconData labelIcon) {
+Widget typeToggleButtonItem(String label, IconData labelIcon) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Text.rich(

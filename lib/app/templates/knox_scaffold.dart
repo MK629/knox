@@ -11,6 +11,7 @@ class KnoxScaffold extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           leading: Builder(
             builder: (context) {
               return IconButton(

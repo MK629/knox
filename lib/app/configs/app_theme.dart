@@ -254,3 +254,33 @@ ButtonStyle inputFormButtonStyle() {
     ),
   );
 }
+
+ButtonStyle dropDownMenuButtonStyle(){
+  return ButtonStyle(
+    padding: WidgetStateProperty.all(
+      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+    ),
+    backgroundColor: WidgetStateProperty.all(
+      Colors.grey.shade900,
+    ),
+    foregroundColor: WidgetStateProperty.all(
+      Colors.white,
+    ),
+    shape: WidgetStateProperty.all(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    side: WidgetStateProperty.all(
+      BorderSide(
+        color: Colors.grey.shade700,
+      ),
+    ),
+    textStyle: WidgetStateProperty.all(
+      const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+      ),
+    ),
+  );
+}

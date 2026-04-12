@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:knox/app/contexts/preferences.dart';
+import 'package:knox/db/constants.dart';
 import 'package:provider/provider.dart';
 
 class Settings extends StatelessWidget {
@@ -13,11 +14,13 @@ class Settings extends StatelessWidget {
       children: [
         SizedBox(height: 6),
         _makeCommonSettingsOption("App theme", _themeModeToggleButton(preferences), context),
+        _makeCommonSettingsOption("Currency", _currencySelectButton(preferences), context)
       ],
     );
   }
 }
 
+//=============================[ Trigger function buttons ]=============================
 Widget _themeModeToggleButton(Preferences preferences) {
   bool darkMode = preferences.darkMode;
 
@@ -35,7 +38,24 @@ Widget _themeModeToggleButton(Preferences preferences) {
   );
 }
 
-Column _makeCommonSettingsOption(String label, Widget triggerWidget, BuildContext context) {
+Widget _currencySelectButton(Preferences preferences){
+  String currentCurrency = preferences.currency;
+
+  return DropdownButtonHideUnderline(
+    child: DropdownButton(
+      padding: EdgeInsets.only(left: 12, right: 12),
+      value: currentCurrency,
+      items: CurrencyType.values.map((c) => DropdownMenuItem(value: c.name.toUpperCase(),child: Text(c.name.toUpperCase()),)).toList(),
+      onChanged: (value){
+        preferences.setCurrency(value as String);
+      },
+      borderRadius: BorderRadius.circular(12)
+    ),
+  );
+}
+
+//=============================[ Settings item template ]=============================
+Widget _makeCommonSettingsOption(String label, Widget triggerWidget, BuildContext context) {
   return Column(
     mainAxisAlignment: MainAxisAlignment.center,
     children: [

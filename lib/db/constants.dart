@@ -47,3 +47,20 @@ class TimeHelper {
   static DateTime todayDate = DateUtils.dateOnly(DateTime.now());
   static List<String> monthNames = ["0 Index filler", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 }
+
+enum CurrencyType {
+  usd, // US Dollar
+  eur, // Euro
+  gbp, // British Pound
+  jpy, // Japanese Yen
+  cny, // Chinese Yuan
+  krw, // South Korean Won
+  mmk, // Myanmar Kyat
+  thb, // Thai Baht
+  sgd, // Singapore Dollar
+  inr, // Indian Rupee
+  aud, // Australian Dollar
+  cad, // Canadian Dollar
+  chf, // Swiss Franc
+  hkd, // Hong Kong Dollar
+}

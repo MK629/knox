@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:knox/app/components/record_input_form.dart';
 import 'package:knox/app/configs/app_theme.dart';
+import 'package:knox/app/contexts/preferences.dart';
 import 'package:knox/db/constants.dart';
 import 'package:knox/db/entities/finance_record.dart';
 import 'package:knox/db/functions/finance_record_keeper.dart';
 import 'package:knox/utils/knox_date_util.dart';
+import 'package:provider/provider.dart';
 
 class BudgetTracker extends StatefulWidget {
   final bool monthly;
@@ -31,6 +33,9 @@ class _BudgetTrackerState extends State<BudgetTracker> {
 
   @override
   Widget build(BuildContext context) {
+    final prefs = context.read<Preferences>();
+    String currentCurrency = prefs.currency;
+
     return Padding(
       padding: EdgeInsets.all(8.0),
       child: Column(
@@ -67,9 +72,9 @@ class _BudgetTrackerState extends State<BudgetTracker> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        CashFlowCard(totalSum: totalSum),
-                        IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList(), refetchCallback: refetch,),
-                        ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList(), refetchCallback: refetch,),
+                        CashFlowCard(totalSum: totalSum, currency: currentCurrency,),
+                        IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList(), currency: currentCurrency,refetchCallback: refetch,),
+                        ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList(), currency: currentCurrency, refetchCallback: refetch,),
                       ],
                     ),
                     Positioned(
@@ -102,9 +107,10 @@ class _BudgetTrackerState extends State<BudgetTracker> {
 
 //Cashflow card
 class CashFlowCard extends StatelessWidget {
-  const CashFlowCard({super.key, required this.totalSum});
-
   final double totalSum;
+  final String currency;
+
+  const CashFlowCard({super.key, required this.totalSum, required this.currency});
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +124,7 @@ class CashFlowCard extends StatelessWidget {
             cardLabelText("Cash Flow", Icons.payments_outlined, context),
             const SizedBox(height: 10),
             Text(
-              totalSum >= 0 ? "+$totalSum" : "$totalSum",
+              totalSum >= 0 ? "+$totalSum $currency" : "$totalSum $currency",
               style: TextStyle(
                 color: textColor,
                 fontSize: 20,
@@ -134,9 +140,10 @@ class CashFlowCard extends StatelessWidget {
 
 class IncomeDisplayCard extends StatelessWidget {
   final List<FinanceRecord> incomes;
+  final String currency;
   final VoidCallback refetchCallback;
 
-  const IncomeDisplayCard({super.key, required this.incomes, required this.refetchCallback});
+  const IncomeDisplayCard({super.key, required this.incomes, required this.currency, required this.refetchCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +161,7 @@ class IncomeDisplayCard extends StatelessWidget {
           children: [
             cardLabelText("Income", Icons.insert_chart_outlined, context),
             SizedBox(height: 12),
-            scrollingCardPocketDisplay(incomes, theme, refetchCallback)
+            scrollingCardPocketDisplay(incomes, theme, currency, refetchCallback)
           ],
         ),
       ),
@@ -165,9 +172,10 @@ class IncomeDisplayCard extends StatelessWidget {
 //Expense display card
 class ExpenseDisplayCard extends StatelessWidget {
   final List<FinanceRecord> expenses;
+    final String currency;
   final VoidCallback refetchCallback;
 
-  const ExpenseDisplayCard({super.key, required this.expenses, required this.refetchCallback});
+  const ExpenseDisplayCard({super.key, required this.expenses, required this.currency, required this.refetchCallback});
 
   @override
   Widget build(BuildContext context) {
@@ -185,7 +193,7 @@ class ExpenseDisplayCard extends StatelessWidget {
           children: [
             cardLabelText("Expenses", Icons.payment_outlined, context),
             SizedBox(height: 12),
-            scrollingCardPocketDisplay(expenses, theme, refetchCallback)
+            scrollingCardPocketDisplay(expenses, theme, currency, refetchCallback)
           ],
         ),
       ),
@@ -194,7 +202,7 @@ class ExpenseDisplayCard extends StatelessWidget {
 }
 
 //Card label text formatted with icon
-Text cardLabelText(String label, IconData labelIcon, BuildContext context) {
+Widget cardLabelText(String label, IconData labelIcon, BuildContext context) {
   return Text.rich(
     textAlign: TextAlign.center,
     TextSpan(
@@ -215,7 +223,7 @@ Text cardLabelText(String label, IconData labelIcon, BuildContext context) {
 }
 
 //Scrolling card pocket display
-SizedBox scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme, VoidCallback refetchCallback) {
+Widget scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme, String currency, VoidCallback refetchCallback) {
   return SizedBox(
     height: 200,
     child: ListView.separated(
@@ -256,13 +264,6 @@ SizedBox scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme
                     const SizedBox(height: 6),
                     Text("Created: ${KnoxDateUtil.noMilliseconds(record.crtTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
                     Text("Updated: ${KnoxDateUtil.noMilliseconds(record.updTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
-                    // Row(
-                    //   spacing: 10,
-                    //   children: [
-                    //     Text("Created: ${KnoxDateUtil.noTime(record.crtTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
-                    //     Text("Updated: ${KnoxDateUtil.noTime(record.updTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
-                    //   ],
-                    // )
                   ],
                 ),
               ),
