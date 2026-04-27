@@ -269,8 +269,8 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme, 
               ),
               IconButton(
                 alignment: Alignment.bottomCenter,
-                icon: const Icon(Icons.delete_outline),
-                color: redColor,
+                icon: const Icon(Icons.remove_circle_outline_outlined),
+                color: Colors.redAccent,
                 style: inputFormButtonStyle(),
                 onPressed: () async {
                   await FinanceRecordKeeper.deleteRecord(record);
