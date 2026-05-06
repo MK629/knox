@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:knox/db/constants.dart';
+import 'package:knox/db/entities/life_duty.dart';
+import 'package:knox/db/functions/life_duty_enforcer.dart';
 
 class Recurrings extends StatefulWidget {
   const Recurrings({super.key});
@@ -9,10 +12,18 @@ class Recurrings extends StatefulWidget {
 
 class _RecurringsState extends State<Recurrings> {
   bool incomeSel = true;
+  late Future<List<LifeDuty>> lifeDuties;
 
   @override
   void initState() {
     super.initState();
+    lifeDuties = incomeSel ? LifeDutyEnforcer.selectAllDutiesByType(RecordType.income) : LifeDutyEnforcer.selectAllDutiesByType(RecordType.income);
+  }
+
+  void refetch() {
+    setState(() {
+      lifeDuties = incomeSel ? LifeDutyEnforcer.selectAllDutiesByType(RecordType.income) : LifeDutyEnforcer.selectAllDutiesByType(RecordType.income);
+    });
   }
 
   @override
@@ -39,10 +50,12 @@ class _RecurringsState extends State<Recurrings> {
                       setState(() {
                         incomeSel = true;
                       });
+                      refetch();
                     } else if (index == 1) {
                       setState(() {
                         incomeSel = false;
                       });
+                      refetch();
                     }
                   },
                   children: [
@@ -52,7 +65,11 @@ class _RecurringsState extends State<Recurrings> {
                 );
               },
             ),
+            Expanded(
+              child: ListView(
 
+              ),
+            )
           ],
         ),
       ),

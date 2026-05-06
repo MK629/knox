@@ -20,7 +20,22 @@ class LifeDutyEnforcer {
 
     return lifeDutyList;
   }
-  
+
+  static Future<List<LifeDuty>> selectAllDutiesByType(RecordType recordType) async {
+    final db = DbAccountant.getDb;
+    DbAccountant.checkIfDbNullOrOpen(db);
+
+    List<Map<String, Object?>>? lifeDutyResult = await db?.query(TableNames.lifeDutyTbl, where: "type = ?", whereArgs: [recordType.name]);
+
+    if(lifeDutyResult == null || lifeDutyResult.isEmpty){
+      return [];
+    }
+
+    List<LifeDuty> lifeDutyList = lifeDutyResult.map((mapFromDb) => LifeDuty.fromMap(mapFromDb)).toList();
+
+    return lifeDutyList;
+  }
+
   static Future<void> insertNewDuty(LifeDuty lifeDuty) async {
     final db = DbAccountant.getDb;
     DbAccountant.checkIfDbNullOrOpen(db);
@@ -91,7 +106,7 @@ class LifeDutyEnforcer {
     }
   }
 
-  static Future<void> _enforceMonthly(Database? db) async { 
+  static Future<void> _enforceMonthly(Database? db) async {
     List<Map<String, Object?>>? lifeDutyResult = await _fetchLifeDutyByInterval(UpdateInterval.monthly, db);
 
     if(lifeDutyResult == null || lifeDutyResult.isEmpty){
