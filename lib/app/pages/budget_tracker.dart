@@ -50,10 +50,6 @@ class _BudgetTrackerState extends State<BudgetTracker> {
           FutureBuilder(
             future: thisMonthRecords,
             builder: (context, snapshot) {
-              // if (snapshot.connectionState == ConnectionState.waiting) {
-              //   return CircularProgressIndicator();
-              // }
-
               List<FinanceRecord> items = snapshot.hasData ? snapshot.data as List<FinanceRecord> : [];
 
               double totalSum = 0;
@@ -147,8 +143,6 @@ class IncomeDisplayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Card(
       shape: RoundedRectangleBorder(
         side: BorderSide(color: greenColor),
@@ -161,7 +155,7 @@ class IncomeDisplayCard extends StatelessWidget {
           children: [
             cardLabelText("Income", Icons.insert_chart_outlined, context),
             SizedBox(height: 12),
-            scrollingCardPocketDisplay(incomes, theme, currency, refetchCallback)
+            scrollingCardPocketDisplay(incomes, context, currency, refetchCallback)
           ],
         ),
       ),
@@ -179,8 +173,6 @@ class ExpenseDisplayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Card(
       shape: RoundedRectangleBorder(
         side: BorderSide(color: redColor),
@@ -193,7 +185,7 @@ class ExpenseDisplayCard extends StatelessWidget {
           children: [
             cardLabelText("Expenses", Icons.payment_outlined, context),
             SizedBox(height: 12),
-            scrollingCardPocketDisplay(expenses, theme, currency, refetchCallback)
+            scrollingCardPocketDisplay(expenses, context, currency, refetchCallback)
           ],
         ),
       ),
@@ -223,7 +215,8 @@ Widget cardLabelText(String label, IconData labelIcon, BuildContext context) {
 }
 
 //Scrolling card pocket display
-Widget scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme, String currency, VoidCallback refetchCallback) {
+Widget scrollingCardPocketDisplay(List<FinanceRecord> records, BuildContext context, String currency, VoidCallback refetchCallback) {
+  ThemeData theme = Theme.of(context);
   return SizedBox(
     height: 200,
     child: ListView.separated(
@@ -237,7 +230,7 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme, 
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: theme.textTheme.labelLarge?.color as Color,
+              color: Theme.of(context).textTheme.labelLarge?.color as Color,
             ),
           ),
           child: Row(
@@ -267,6 +260,7 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, ThemeData theme, 
                   ],
                 ),
               ),
+              //TODO: ADD Edit button and function
               IconButton(
                 alignment: Alignment.bottomCenter,
                 icon: const Icon(Icons.remove_circle_outline_outlined),

@@ -5,6 +5,7 @@ import 'package:knox/db/constants.dart';
 import 'package:knox/db/entities/finance_record.dart';
 import 'package:knox/db/functions/finance_record_keeper.dart';
 
+//TODO: Make this dynamic for editing forms
 class RecordInputForm extends StatefulWidget {
   const RecordInputForm({super.key});
 
