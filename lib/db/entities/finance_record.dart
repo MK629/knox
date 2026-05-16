@@ -76,7 +76,8 @@ class FinanceRecord {
     updTime = DateTime.now();
   }
 
-  void printFields() {
-    print("=================================================[ $tag $amount ]=================================================");
+  void updateType(RecordType newType) {
+    type = newType;
+    updTime = DateTime.now();
   }
 }

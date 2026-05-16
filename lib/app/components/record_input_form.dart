@@ -7,13 +7,20 @@ import 'package:knox/db/functions/finance_record_keeper.dart';
 
 //TODO: Make this dynamic for editing forms
 class RecordInputForm extends StatefulWidget {
-  const RecordInputForm({super.key});
+  final FinanceRecord? updatingFinanceRecord;
+
+  /// If this is used for insertions, leave [updatingRecord] as null.
+  const RecordInputForm({super.key, this.updatingFinanceRecord});
 
   @override
   State<RecordInputForm> createState() => _RecordInputFormState();
 }
 
 class _RecordInputFormState extends State<RecordInputForm> {
+  late FinanceRecord? updatingFinanceRecord;
+  late bool updating;
+  late String initialTagValue;
+  late String initialAmountValue;
   late RecordType recordType;
   late TextEditingController tagController;
   late TextEditingController amountController;
@@ -21,9 +28,25 @@ class _RecordInputFormState extends State<RecordInputForm> {
   @override
   void initState() {
     super.initState();
-    recordType = RecordType.income;
-    tagController = TextEditingController();
-    amountController = TextEditingController();
+
+    updatingFinanceRecord = widget.updatingFinanceRecord;
+    if(updatingFinanceRecord == null){
+      //Init states for an insert-ready form
+      updating = false;
+      initialTagValue = "";
+      initialAmountValue = "";
+      recordType = RecordType.income;
+    }
+    else{
+      //Init states for an update-ready form
+      updating = true;
+      initialTagValue = updatingFinanceRecord!.tag;
+      initialAmountValue = updatingFinanceRecord!.amount.toString();
+      recordType = updatingFinanceRecord!.type ;
+    }
+
+    tagController = TextEditingController(text: initialTagValue);
+    amountController = TextEditingController(text: initialAmountValue);
   }
 
   @override
@@ -75,6 +98,29 @@ class _RecordInputFormState extends State<RecordInputForm> {
                   Navigator.pop(context);
                 },
               ),
+              updating ?
+              IconButton(
+                style: inputFormButtonStyle(),
+                icon: Icon(Icons.edit_outlined),
+                onPressed: () async {
+                  final tagInputStr = tagController.text;
+                  final amountInputStr = amountController.text;
+                  if (tagInputStr.isEmpty || amountInputStr.isEmpty) {
+                    return;
+                  }
+
+                  updatingFinanceRecord!.updateTag(tagInputStr);
+                  updatingFinanceRecord!.updateAmount(double.tryParse(amountInputStr) as double);
+                  updatingFinanceRecord!.updateType(recordType);
+
+                  await FinanceRecordKeeper.updateRecord(updatingFinanceRecord as FinanceRecord);
+
+                  if(context.mounted){
+                    Navigator.pop(context);
+                  }
+                },
+              )
+              :
               IconButton(
                 style: inputFormButtonStyle(),
                 icon: Icon(Icons.post_add_outlined),

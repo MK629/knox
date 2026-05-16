@@ -235,6 +235,7 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, BuildContext cont
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 12,
             children: [
               Expanded(
                 child: Column(
@@ -260,7 +261,21 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, BuildContext cont
                   ],
                 ),
               ),
-              //TODO: ADD Edit button and function
+              IconButton(
+                alignment: Alignment.bottomCenter,
+                icon: const Icon(Icons.edit),
+                style: inputFormButtonStyle(),
+                onPressed: () async {
+                  await showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return RecordInputForm(updatingFinanceRecord: record,);
+                    },
+                  );
+                  refetchCallback();
+                },
+              ),
               IconButton(
                 alignment: Alignment.bottomCenter,
                 icon: const Icon(Icons.remove_circle_outline_outlined),
