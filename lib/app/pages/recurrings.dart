@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:knox/app/components/life_duty_input_form.dart';
 import 'package:knox/app/configs/app_theme.dart';
 import 'package:knox/app/contexts/preferences.dart';
 import 'package:knox/db/constants.dart';
@@ -91,7 +92,15 @@ class _RecurringsState extends State<Recurrings> {
                     child: IconButton(
                       icon: Icon(Icons.post_add_outlined),
                       style: inputFormButtonStyle(),
-                      onPressed: () => {}, //TODO: Implement
+                      onPressed: () => {
+                        showModalBottomSheet(
+                          isScrollControlled: true,
+                          context: context,
+                          builder: (context) {
+                            return LifeDutyInputForm();
+                          },
+                        )
+                      },
                     ),
                   ),
                 ],
@@ -146,6 +155,21 @@ Widget scrollingCardPocketDisplay(List<LifeDuty> records, BuildContext context, 
           children: [
             Expanded(
               child: Placeholder()
+            ),
+            IconButton(
+              alignment: Alignment.bottomCenter,
+              icon: const Icon(Icons.edit),
+              style: inputFormButtonStyle(),
+              onPressed: () async {
+                await showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return LifeDutyInputForm(updatingLifeduty: record,);
+                  },
+                );
+                refetchCallback();
+              },
             ),
             IconButton(
               alignment: Alignment.bottomCenter,

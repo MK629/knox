@@ -15,8 +15,8 @@ class LifeDuty {
   factory LifeDuty.toInsertObject(String tag, RecordType type, UpdateInterval updateInterval, double amount, DateTime startDate){
     return LifeDuty._(
       type: type,
-      tag: tag, 
-      updateInterval: updateInterval, 
+      tag: tag,
+      updateInterval: updateInterval,
       amount: amount,
       startDate: DateUtils.dateOnly(startDate),
       latestUpdate: DateUtils.dateOnly(TimeHelper.stoneAge)
@@ -27,8 +27,8 @@ class LifeDuty {
     return LifeDuty._(
       id: mapFromDb["id"] as int,
       type: RecordType.values.byName(mapFromDb["type"] as String),
-      tag: mapFromDb["tag"] as String, 
-      updateInterval: UpdateInterval.values.byName(mapFromDb["update_interval"] as String), 
+      tag: mapFromDb["tag"] as String,
+      updateInterval: UpdateInterval.values.byName(mapFromDb["update_interval"] as String),
       amount: mapFromDb["amount"] as double,
       startDate: DateTime.parse(mapFromDb["start_date"] as String),
       latestUpdate: DateTime.parse(mapFromDb["latest_update"] as String)
@@ -59,8 +59,16 @@ class LifeDuty {
     };
   }
 
+  void updateType(RecordType newType){
+    type = newType;
+  }
+
   void updateTag(String newTag){
     tag = newTag;
+  }
+
+  void updateUpdateInterval(UpdateInterval newUpdateInterval){
+    updateInterval = newUpdateInterval;
   }
 
   void updateAmount(double newAmount){

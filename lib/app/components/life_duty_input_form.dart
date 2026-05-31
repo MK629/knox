@@ -2,46 +2,47 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:knox/app/configs/app_theme.dart';
 import 'package:knox/db/constants.dart';
-import 'package:knox/db/entities/finance_record.dart';
-import 'package:knox/db/functions/finance_record_keeper.dart';
+import 'package:knox/db/entities/life_duty.dart';
+import 'package:knox/db/functions/life_duty_enforcer.dart';
 
-class RecordInputForm extends StatefulWidget {
-  final FinanceRecord? updatingFinanceRecord;
+class LifeDutyInputForm extends StatefulWidget {
+  final LifeDuty? updatingLifeduty;
 
-  /// If this is used for insertions, leave [updatingRecord] as null.
-  const RecordInputForm({super.key, this.updatingFinanceRecord});
+  /// If this is used for insertions, leave [updatingLifeduty] as null.
+  const LifeDutyInputForm({super.key, this.updatingLifeduty});
 
   @override
-  State<RecordInputForm> createState() => _RecordInputFormState();
+  State<LifeDutyInputForm> createState() => _LifeDutyInputFormState();
 }
-
-class _RecordInputFormState extends State<RecordInputForm> {
-  late FinanceRecord? updatingFinanceRecord;
+class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
+  late LifeDuty? updatingLifeduty;
   late bool updating;
   late String initialTagValue;
   late String initialAmountValue;
   late RecordType recordType;
+  late UpdateInterval updateInterval;
   late TextEditingController tagController;
   late TextEditingController amountController;
 
   @override
   void initState() {
     super.initState();
-
-    updatingFinanceRecord = widget.updatingFinanceRecord;
-    if(updatingFinanceRecord == null){
+    updatingLifeduty = widget.updatingLifeduty;
+    if(updatingLifeduty == null){
       //Init states for an insert-ready form
       updating = false;
       initialTagValue = "";
       initialAmountValue = "";
       recordType = RecordType.income;
+      updateInterval = UpdateInterval.daily;
     }
     else{
       //Init states for an update-ready form
       updating = true;
-      initialTagValue = updatingFinanceRecord!.tag;
-      initialAmountValue = updatingFinanceRecord!.amount.toString();
-      recordType = updatingFinanceRecord!.type ;
+      initialTagValue = updatingLifeduty!.tag;
+      initialAmountValue = updatingLifeduty!.amount.toString();
+      recordType = updatingLifeduty!.type;
+      updateInterval = updatingLifeduty!.updateInterval;
     }
 
     tagController = TextEditingController(text: initialTagValue);
@@ -71,6 +72,30 @@ class _RecordInputFormState extends State<RecordInputForm> {
               onPressed: (index) {
                 setState(() {
                   recordType = RecordType.values[index];
+                });
+              },
+            ),
+          ),
+          updating ?
+          Text(updateInterval.name) //Make UI for this
+          :
+          Container(
+            alignment: Alignment.center,
+            child: ToggleButtons(
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              isSelected: [
+                updateInterval == UpdateInterval.daily,
+                updateInterval == UpdateInterval.monthly,
+                updateInterval == UpdateInterval.yearly,
+              ],
+              children: [
+                typeToggleButtonItem("Daily", Icons.calendar_today_outlined),
+                typeToggleButtonItem("Monthly", Icons.calendar_month_outlined),
+                typeToggleButtonItem("Yearly", Icons.calendar_view_day_outlined),
+              ],
+              onPressed: (index) {
+                setState(() {
+                  updateInterval = UpdateInterval.values[index];
                 });
               },
             ),
@@ -108,11 +133,13 @@ class _RecordInputFormState extends State<RecordInputForm> {
                     return;
                   }
 
-                  updatingFinanceRecord!.updateTag(tagInputStr);
-                  updatingFinanceRecord!.updateAmount(double.tryParse(amountInputStr) as double);
-                  updatingFinanceRecord!.updateType(recordType);
+                  updatingLifeduty!.updateType(recordType);
+                  updatingLifeduty!.updateTag(tagInputStr);
+                  updatingLifeduty!.updateUpdateInterval(updateInterval);
+                  updatingLifeduty!.updateAmount(double.tryParse(amountInputStr) as double);
 
-                  await FinanceRecordKeeper.updateRecord(updatingFinanceRecord as FinanceRecord);
+
+                  await LifeDutyEnforcer.updateDuty(updatingLifeduty as LifeDuty);
 
                   if(context.mounted){
                     Navigator.pop(context);
@@ -130,14 +157,11 @@ class _RecordInputFormState extends State<RecordInputForm> {
                     return;
                   }
 
-                  FinanceRecord insertReadyFinanceRecord = FinanceRecord.toInsertObject(
-                    recordType,
-                    tagInputStr,
-                    DateTime.now(),
-                    double.tryParse(amountInputStr) as double
-                  );
-
-                  await FinanceRecordKeeper.insertNewRecord(insertReadyFinanceRecord);
+                  // LifeDuty insertReadyLifeDuty = LifeDuty.toInsertObject(
+                  //   tagInputStr,
+                  //   recordType,
+                  //   updateInterval, double.tryParse(amountInputStr) as double,
+                  // );
 
                   //Complier complains if I don't do this. Will investigate later.
                   if(context.mounted){

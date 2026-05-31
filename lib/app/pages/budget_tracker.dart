@@ -80,7 +80,7 @@ class _BudgetTrackerState extends State<BudgetTracker> {
                         child: Icon(Icons.post_add_outlined),
                         onPressed: () async {
                           await showModalBottomSheet(
-                            isScrollControlled: true,
+                            isScrollControlled: false,
                             context: context,
                             builder: (context) {
                               return RecordInputForm();
@@ -243,7 +243,7 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, BuildContext cont
                   children: [
                     Text(
                       record.tag,
-                      style: theme.textTheme.titleMedium?.copyWith(
+                      style: theme.textTheme.bodyLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -267,7 +267,7 @@ Widget scrollingCardPocketDisplay(List<FinanceRecord> records, BuildContext cont
                 style: inputFormButtonStyle(),
                 onPressed: () async {
                   await showModalBottomSheet(
-                    isScrollControlled: true,
+                    isScrollControlled: false,
                     context: context,
                     builder: (context) {
                       return RecordInputForm(updatingFinanceRecord: record,);
