@@ -4,6 +4,7 @@ import 'package:knox/app/configs/app_theme.dart';
 import 'package:knox/db/constants.dart';
 import 'package:knox/db/entities/life_duty.dart';
 import 'package:knox/db/functions/life_duty_enforcer.dart';
+import 'package:knox/utils/knox_date_util.dart';
 
 class LifeDutyInputForm extends StatefulWidget {
   final LifeDuty? updatingLifeduty;
@@ -21,8 +22,10 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
   late String initialAmountValue;
   late RecordType recordType;
   late UpdateInterval updateInterval;
+  late DateTime startDate;
   late TextEditingController tagController;
   late TextEditingController amountController;
+  late TextEditingController startDateTextController;
 
   @override
   void initState() {
@@ -35,6 +38,7 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
       initialAmountValue = "";
       recordType = RecordType.income;
       updateInterval = UpdateInterval.daily;
+      startDate = DateUtils.dateOnly(DateTime.now());
     }
     else{
       //Init states for an update-ready form
@@ -43,14 +47,18 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
       initialAmountValue = updatingLifeduty!.amount.toString();
       recordType = updatingLifeduty!.type;
       updateInterval = updatingLifeduty!.updateInterval;
+      startDate = DateUtils.dateOnly(updatingLifeduty!.startDate);
     }
 
     tagController = TextEditingController(text: initialTagValue);
     amountController = TextEditingController(text: initialAmountValue);
+    startDateTextController = TextEditingController(text: KnoxDateUtil.noTime(startDate));
   }
 
   @override
   Widget build(BuildContext context) {
+    ThemeData theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Column(
@@ -112,6 +120,49 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
             ],
             controller: amountController,
           ),
+          updating ?
+          Text(KnoxDateUtil.noTime(startDate))
+          :
+          InkWell(
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: startDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
+
+              if (pickedDate != null) {
+                setState(() {
+                  startDate = DateUtils.dateOnly(pickedDate);
+                });
+              }
+            },
+            borderRadius: BorderRadius.circular(12),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).colorScheme.outline,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.calendar_today),
+                  const SizedBox(width: 12),
+                  Text(
+                    KnoxDateUtil.noTime(startDate),
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                ],
+              ),
+            ),
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -135,9 +186,7 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
 
                   updatingLifeduty!.updateType(recordType);
                   updatingLifeduty!.updateTag(tagInputStr);
-                  updatingLifeduty!.updateUpdateInterval(updateInterval);
                   updatingLifeduty!.updateAmount(double.tryParse(amountInputStr) as double);
-
 
                   await LifeDutyEnforcer.updateDuty(updatingLifeduty as LifeDuty);
 
@@ -157,11 +206,15 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
                     return;
                   }
 
-                  // LifeDuty insertReadyLifeDuty = LifeDuty.toInsertObject(
-                  //   tagInputStr,
-                  //   recordType,
-                  //   updateInterval, double.tryParse(amountInputStr) as double,
-                  // );
+                  LifeDuty insertReadyLifeDuty = LifeDuty.toInsertObject(
+                    tagInputStr,
+                    recordType,
+                    updateInterval,
+                    double.tryParse(amountInputStr) as double,
+                    startDate
+                  );
+
+                  await LifeDutyEnforcer.insertNewDuty(insertReadyLifeDuty);
 
                   //Complier complains if I don't do this. Will investigate later.
                   if(context.mounted){

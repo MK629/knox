@@ -96,6 +96,8 @@ ThemeData lightTheme() {
           width: 1
         )
       ),
+      prefixIconColor: lightColor2,
+      suffixIconColor: lightColor2,
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: lightColor2,
@@ -104,6 +106,34 @@ ThemeData lightTheme() {
     ),
     drawerTheme: shardDrawerTheme(),
     dividerTheme: DividerThemeData(color: lightColor2, thickness: 0.75),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: lightColor1,
+
+      headerBackgroundColor: lightColor1,
+
+      surfaceTintColor: Colors.transparent,
+
+      todayBorder: BorderSide(
+        color: lightColor2,
+      ),
+
+      dayStyle: TextStyle(
+        color: lightColor2,
+      ),
+
+      weekdayStyle: TextStyle(
+        color: lightColor2,
+        fontWeight: FontWeight.w500,
+      ),
+
+      yearStyle: TextStyle(
+        color: lightColor2,
+      ),
+
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
   );
 }
 
@@ -138,6 +168,7 @@ ThemeData darkTheme() {
       bodyMedium: TextStyle(fontSize: 14, fontWeight: FontWeight.normal),
 
       labelLarge: TextStyle(
+        color: darkColor2,
         fontSize: 16,
         fontWeight: FontWeight.w600,
       ),
@@ -204,6 +235,8 @@ ThemeData darkTheme() {
           width: 1
         )
       ),
+      prefixIconColor: darkColor1,
+      suffixIconColor: darkColor1,
     ),
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: darkColor2,
@@ -212,6 +245,43 @@ ThemeData darkTheme() {
     ),
     drawerTheme: shardDrawerTheme(),
     dividerTheme: DividerThemeData(color: darkColor2, thickness: 0.75),
+    datePickerTheme: DatePickerThemeData(
+      backgroundColor: darkColor1,
+      surfaceTintColor: Colors.transparent,
+
+      headerBackgroundColor: darkColor1,
+      headerForegroundColor: darkColor2,
+
+      yearForegroundColor: WidgetStatePropertyAll(darkColor2),
+      dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return darkColor1;
+        }
+        if (states.contains(WidgetState.disabled)) {
+          return darkColor2.withOpacity(0.3);
+        }
+        return darkColor2;
+      }),
+
+      dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return darkColor2;
+        }
+        return Colors.transparent;
+      }),
+
+      todayForegroundColor: WidgetStatePropertyAll(darkColor2),
+      todayBorder: BorderSide(color: darkColor2),
+
+      weekdayStyle: TextStyle(
+        color: darkColor2.withOpacity(0.7),
+        fontWeight: FontWeight.w500,
+      ),
+
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+    ),
   );
 }
 

@@ -5,6 +5,7 @@ import 'package:knox/app/contexts/preferences.dart';
 import 'package:knox/db/constants.dart';
 import 'package:knox/db/entities/life_duty.dart';
 import 'package:knox/db/functions/life_duty_enforcer.dart';
+import 'package:knox/utils/knox_date_util.dart';
 import 'package:provider/provider.dart';
 
 class Recurrings extends StatefulWidget {
@@ -21,12 +22,12 @@ class _RecurringsState extends State<Recurrings> {
   @override
   void initState() {
     super.initState();
-    lifeDuties = incomeSel ? LifeDutyEnforcer.selectAllDutiesByType(RecordType.income) : LifeDutyEnforcer.selectAllDutiesByType(RecordType.income);
+    lifeDuties = incomeSel ? LifeDutyEnforcer.selectAllDutiesByType(RecordType.income) : LifeDutyEnforcer.selectAllDutiesByType(RecordType.expense);
   }
 
   void refetch() {
     setState(() {
-      lifeDuties = incomeSel ? LifeDutyEnforcer.selectAllDutiesByType(RecordType.income) : LifeDutyEnforcer.selectAllDutiesByType(RecordType.income);
+      lifeDuties = incomeSel ? LifeDutyEnforcer.selectAllDutiesByType(RecordType.income) : LifeDutyEnforcer.selectAllDutiesByType(RecordType.expense);
     });
   }
 
@@ -78,12 +79,15 @@ class _RecurringsState extends State<Recurrings> {
                     },
                   ),
                   Expanded(
-                    child: FutureBuilder(
-                      future: lifeDuties,
-                      builder: (context, snapshot) {
-                        List<LifeDuty> items = snapshot.hasData ? snapshot.data as List<LifeDuty> : [];
-                        return scrollingCardPocketDisplay(items, context, currentCurrency, refetch);
-                      },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: FutureBuilder(
+                        future: lifeDuties,
+                        builder: (context, snapshot) {
+                          List<LifeDuty> items = snapshot.hasData ? snapshot.data as List<LifeDuty> : [];
+                          return scrollingCardPocketDisplay(items, context, currentCurrency, refetch);
+                        },
+                      ),
                     )
                   ),
                   Container(
@@ -152,9 +156,38 @@ Widget scrollingCardPocketDisplay(List<LifeDuty> records, BuildContext context, 
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 12,
           children: [
             Expanded(
-              child: Placeholder()
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    record.tag,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${record.amount}",
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: record.type == RecordType.income ? greenColor : redColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    record.updateInterval.name.toUpperCase(),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text("Start date: ${KnoxDateUtil.noTime(record.startDate)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                  Text("Last implemented: ${KnoxDateUtil.noTime(record.latestUpdate)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                ],
+              ),
             ),
             IconButton(
               alignment: Alignment.bottomCenter,
@@ -177,6 +210,7 @@ Widget scrollingCardPocketDisplay(List<LifeDuty> records, BuildContext context, 
               color: Colors.redAccent,
               style: inputFormButtonStyle(),
               onPressed: () async {
+                LifeDutyEnforcer.deleteDuty(record);
                 refetchCallback(); //TODO: Implement
               },
             ),
