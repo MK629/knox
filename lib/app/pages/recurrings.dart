@@ -96,14 +96,16 @@ class _RecurringsState extends State<Recurrings> {
                     child: IconButton(
                       icon: Icon(Icons.post_add_outlined),
                       style: inputFormButtonStyle(),
-                      onPressed: () => {
-                        showModalBottomSheet(
+                      onPressed: () async {
+                        await showModalBottomSheet(
                           isScrollControlled: true,
                           context: context,
                           builder: (context) {
                             return LifeDutyInputForm();
                           },
-                        )
+                        );
+
+                        refetch();
                       },
                     ),
                   ),

@@ -4,8 +4,8 @@ ThemeData lightTheme() {
   return ThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.light,
-      primary: lightColor1,
-      onPrimary: lightColor2,
+      primary: lightColor2,
+      onPrimary: lightColor1,
       secondary: lightColor2,
       onSecondary: lightColor1,
       error: lightColor2,
@@ -108,26 +108,40 @@ ThemeData lightTheme() {
     dividerTheme: DividerThemeData(color: lightColor2, thickness: 0.75),
     datePickerTheme: DatePickerThemeData(
       backgroundColor: lightColor1,
-
-      headerBackgroundColor: lightColor1,
-
       surfaceTintColor: Colors.transparent,
 
-      todayBorder: BorderSide(
-        color: lightColor2,
-      ),
+      headerBackgroundColor: lightColor1,
+      headerForegroundColor: lightColor2,
 
-      dayStyle: TextStyle(
-        color: lightColor2,
-      ),
+      yearForegroundColor: WidgetStatePropertyAll(lightColor2),
+      dayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return lightColor1;
+        }
+        if (states.contains(WidgetState.disabled)) {
+          return lightColor2.withValues(alpha: 0.3);
+        }
+        return lightColor2;
+      }),
+
+      dayBackgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return lightColor2;
+        }
+        return Colors.transparent;
+      }),
+
+      todayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return lightColor1;
+        }
+        return lightColor2;
+      }),
+      todayBorder: BorderSide(color: lightColor2),
 
       weekdayStyle: TextStyle(
-        color: lightColor2,
+        color: lightColor2.withValues(alpha: 0.7),
         fontWeight: FontWeight.w500,
-      ),
-
-      yearStyle: TextStyle(
-        color: lightColor2,
       ),
 
       shape: RoundedRectangleBorder(
@@ -141,8 +155,8 @@ ThemeData darkTheme() {
   return ThemeData(
     colorScheme: ColorScheme(
       brightness: Brightness.dark,
-      primary: darkColor1,
-      onPrimary: darkColor2,
+      primary: darkColor2,
+      onPrimary: darkColor1,
       secondary: darkColor2,
       onSecondary: darkColor1,
       error: darkColor2,
@@ -258,7 +272,7 @@ ThemeData darkTheme() {
           return darkColor1;
         }
         if (states.contains(WidgetState.disabled)) {
-          return darkColor2.withOpacity(0.3);
+          return darkColor2.withValues(alpha: 0.3);
         }
         return darkColor2;
       }),
@@ -270,11 +284,16 @@ ThemeData darkTheme() {
         return Colors.transparent;
       }),
 
-      todayForegroundColor: WidgetStatePropertyAll(darkColor2),
+      todayForegroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
+          return darkColor1;
+        }
+        return darkColor2;
+      }),
       todayBorder: BorderSide(color: darkColor2),
 
       weekdayStyle: TextStyle(
-        color: darkColor2.withOpacity(0.7),
+        color: darkColor2.withValues(alpha: 0.7),
         fontWeight: FontWeight.w500,
       ),
 
