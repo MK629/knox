@@ -40,12 +40,14 @@ class LifeDutyEnforcer {
     final db = DbAccountant.getDb;
     DbAccountant.checkIfDbNullOrOpen(db);
 
-    if(DateUtils.isSameDay(lifeDuty.startDate, TimeHelper.todayDate)){
-      await FinanceRecordKeeper.insertNewRecord(FinanceRecord.toInsertObject(lifeDuty.type, lifeDuty.tag, TimeHelper.todayDate, lifeDuty.amount));
-      lifeDuty.setLatestUpdateDate(TimeHelper.todayDate);
-    }
+    // if(DateUtils.isSameDay(lifeDuty.startDate, TimeHelper.todayDate)){
+    //   await FinanceRecordKeeper.insertNewRecord(FinanceRecord.toInsertObject(lifeDuty.type, lifeDuty.tag, TimeHelper.todayDate, lifeDuty.amount));
+    //   lifeDuty.setLatestUpdateDate(TimeHelper.todayDate);
+    // }
 
     await db?.insert(TableNames.lifeDutyTbl, lifeDuty.toInsertMap());
+
+    await enforceDuty();
   }
 
   static Future<void> updateDuty(LifeDuty lifeDuty) async {

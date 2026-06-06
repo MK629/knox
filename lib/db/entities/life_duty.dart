@@ -3,12 +3,12 @@ import 'package:knox/db/constants.dart';
 
 class LifeDuty {
   int? id;
-  late RecordType type;
-  late String tag;
-  late UpdateInterval updateInterval;
-  late double amount;
-  late DateTime startDate;
-  late DateTime latestUpdate;
+  RecordType type;
+  String tag;
+  UpdateInterval updateInterval;
+  double amount;
+  DateTime startDate;
+  DateTime latestUpdate;
 
   LifeDuty._({this.id, required this.type, required this.tag, required this.updateInterval, required this.amount, required this.startDate, required this.latestUpdate});
 
