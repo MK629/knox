@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class KnoxDateUtil {
 
+  ///Needs to pass in lifeDutyStartDate to normalize February's bullshit dates when incrementing by a month.
   static DateTime nextMonth(DateTime lifeDutylatestUpdate, DateTime lifeDutyStartDate){
     bool startOnFinalDay = false;
 
@@ -30,7 +31,7 @@ class KnoxDateUtil {
       startOnFinalDay = true;
     }
 
-    //If it's supposed to start on final day.
+    //If it's supposed to start on final day of a month.
     if(startOnFinalDay){
       if(isMonthFeb(month)){
         day = isLeapYear(year) ? 29 : 28;
@@ -42,7 +43,7 @@ class KnoxDateUtil {
         day = 31;
       }
     }
-    //If not, clamp february to prevent January 29,30,31 scenarios.
+    //If not, clamp february to prevent January 29,30 scenarios.
     else if(isMonthFeb(month) && day >= 29){
       day = isLeapYear(year) ? 29 : 28;
     }
@@ -54,6 +55,7 @@ class KnoxDateUtil {
     );
   }
 
+  ///Needs to pass in lifeDutyStartDate to normalize February's bullshit dates when incrementing by a month to check.
   static bool isMoreThanOrIsOneMonthDiff(DateTime lifeDutylatestUpdate, DateTime today, DateTime lifeDutyStartDate){
     DateTime oneMonthAfter = nextMonth(lifeDutylatestUpdate, lifeDutyStartDate);
     return today.isAfter(oneMonthAfter) || DateUtils.isSameDay(oneMonthAfter, today);
@@ -82,6 +84,7 @@ class KnoxDateUtil {
     return month == 4 || month == 6 || month == 9 || month == 11;
   }
 
+  ///Needs to pass in lifeDutyStartDate to normalize February's bullshit dates when incrementing by a year.
   static DateTime nextYear(DateTime lifeDutylatestUpdate, DateTime lifeDutyStartDate){
 
     int year = lifeDutylatestUpdate.year + 1;
@@ -99,6 +102,7 @@ class KnoxDateUtil {
     );
   }
 
+  ///Needs to pass in lifeDutyStartDate to normalize February's bullshit dates when incrementing by a year to check.
   static bool isMoreThanOrIsOneYearDiff(DateTime lifeDutylatestUpdate, DateTime today, DateTime lifeDutyStartDate){
     DateTime oneYearAfter = nextYear(lifeDutylatestUpdate, lifeDutyStartDate);
     return today.isAfter(oneYearAfter) || DateUtils.isSameDay(oneYearAfter, today);
