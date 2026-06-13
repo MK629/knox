@@ -41,7 +41,7 @@ class _RecurringsState extends State<Recurrings> {
       child: Column(
         spacing: 20,
         children: [
-          Text("Your constant incomes & expenses", style: Theme.of(context).textTheme.titleLarge,),
+          Text("Set your recurring Incomes/Expenses", style: Theme.of(context).textTheme.titleLarge,),
           Expanded(
             child: Card(
               child: Column(

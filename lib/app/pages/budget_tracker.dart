@@ -17,17 +17,19 @@ class BudgetTracker extends StatefulWidget {
 }
 
 class _BudgetTrackerState extends State<BudgetTracker> {
-  late Future<List<FinanceRecord>> thisMonthRecords;
+  bool incomeSel = true;
+  late Future<List<FinanceRecord>> records;
+  late Future<List<FinanceRecord>> recordsOnShown;
 
   @override
   void initState() {
     super.initState();
-    thisMonthRecords = widget.monthly ? FinanceRecordKeeper.selectThisMonthRecords() : FinanceRecordKeeper.selectAllRecords();
+    records = widget.monthly ? FinanceRecordKeeper.selectThisMonthRecordsDESC() : FinanceRecordKeeper.selectAllRecordsDESC();
   }
 
   void refetch() {
     setState(() {
-      thisMonthRecords = widget.monthly ? FinanceRecordKeeper.selectThisMonthRecords() : FinanceRecordKeeper.selectAllRecords();
+      records = widget.monthly ? FinanceRecordKeeper.selectThisMonthRecordsDESC() : FinanceRecordKeeper.selectAllRecordsDESC();
     });
   }
 
@@ -47,53 +49,101 @@ class _BudgetTrackerState extends State<BudgetTracker> {
             style: Theme.of(context).textTheme.titleLarge,
           ),
           SizedBox(height: 20),
-          FutureBuilder(
-            future: thisMonthRecords,
-            builder: (context, snapshot) {
-              List<FinanceRecord> items = snapshot.hasData ? snapshot.data as List<FinanceRecord> : [];
+          Expanded(
+            child: FutureBuilder(
+              future: records,
+              builder: (context, snapshot) {
+                List<FinanceRecord> items = snapshot.hasData ? snapshot.data as List<FinanceRecord> : [];
 
-              double totalSum = 0;
+                double totalSum = 0;
 
-              for (FinanceRecord record in items) {
-                if (record.type == RecordType.income) {
-                  totalSum += record.amount;
-                } else if (record.type == RecordType.expense) {
-                  totalSum -= record.amount;
+                for (FinanceRecord record in items) {
+                  if (record.type == RecordType.income) {
+                    totalSum += record.amount;
+                  } else if (record.type == RecordType.expense) {
+                    totalSum -= record.amount;
+                  }
                 }
-              }
 
-              return Expanded(
-                child: Stack(
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        CashFlowCard(totalSum: totalSum, currency: currentCurrency,),
-                        IncomeDisplayCard(incomes: items.where((element) => element.type == RecordType.income).toList(), currency: currentCurrency,refetchCallback: refetch,),
-                        ExpenseDisplayCard(expenses: items.where((element) => element.type == RecordType.expense).toList(), currency: currentCurrency, refetchCallback: refetch,),
-                      ],
-                    ),
-                    Positioned(
-                      bottom: 4,
-                      right: 16,
-                      child: FloatingActionButton(
-                        child: Icon(Icons.post_add_outlined),
-                        onPressed: () async {
-                          await showModalBottomSheet(
-                            isScrollControlled: false,
-                            context: context,
-                            builder: (context) {
-                              return RecordInputForm();
-                            },
-                          );
-                          refetch();
-                        },
+                    CashFlowCard(totalSum: totalSum, currency: currentCurrency,), //CASHFLOW CARD
+                    SizedBox(height: 4,),
+                    //MAIN CARD
+                    Expanded(
+                      child: Card(
+                        child: Column(
+                          children: [
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                final buttonWidth = constraints.maxWidth / 2;
+
+                                return ToggleButtons(
+                                  isSelected: [incomeSel, !incomeSel],
+                                  constraints: BoxConstraints(
+                                    minWidth: buttonWidth - 1.5, //3 pixels overflowed. Manually subtracted 1.5 for each button. Burmese style!
+                                    maxWidth: buttonWidth - 1.5, //3 pixels overflowed. Manually subtracted 1.5 for each button. Burmese style!
+                                    minHeight: 48
+                                  ),
+                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(12), topRight: Radius.circular(12)),
+                                  onPressed: (index) {
+                                    if (index == 0) {
+                                      setState(() {
+                                        incomeSel = true;
+                                      });
+                                      refetch();
+                                    } else if (index == 1) {
+                                      setState(() {
+                                        incomeSel = false;
+                                      });
+                                      refetch();
+                                    }
+                                  },
+                                  children: [
+                                    iconSpanText("Incomes", Icons.insert_chart_outlined),
+                                    iconSpanText("Expenses", Icons.payment_outlined)
+                                  ],
+                                );
+                              },
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: scrollingCardPocketDisplay(
+                                  items.where((element) => incomeSel ? element.type == RecordType.income : element.type == RecordType.expense).toList(),
+                                  context,
+                                  currentCurrency,
+                                  refetch
+                                ),
+                              )
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(8.0),
+                              width: double.infinity,
+                              child: IconButton(
+                                icon: Icon(Icons.post_add_outlined),
+                                style: inputFormButtonStyle(),
+                                onPressed: () async {
+                                  await showModalBottomSheet(
+                                    isScrollControlled: false,
+                                    context: context,
+                                    builder: (context) {
+                                      return RecordInputForm();
+                                    },
+                                  );
+                                  refetch();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -134,65 +184,6 @@ class CashFlowCard extends StatelessWidget {
   }
 }
 
-class IncomeDisplayCard extends StatelessWidget {
-  final List<FinanceRecord> incomes;
-  final String currency;
-  final VoidCallback refetchCallback;
-
-  const IncomeDisplayCard({super.key, required this.incomes, required this.currency, required this.refetchCallback});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: greenColor),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            cardLabelText("Income", Icons.insert_chart_outlined, context),
-            SizedBox(height: 12),
-            scrollingCardPocketDisplay(incomes, context, currency, refetchCallback)
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-//Expense display card
-class ExpenseDisplayCard extends StatelessWidget {
-  final List<FinanceRecord> expenses;
-    final String currency;
-  final VoidCallback refetchCallback;
-
-  const ExpenseDisplayCard({super.key, required this.expenses, required this.currency, required this.refetchCallback});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: redColor),
-        borderRadius: BorderRadius.all(Radius.circular(12)),
-      ),
-      child: Padding(
-        padding: EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            cardLabelText("Expenses", Icons.payment_outlined, context),
-            SizedBox(height: 12),
-            scrollingCardPocketDisplay(expenses, context, currency, refetchCallback)
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 //Card label text formatted with icon
 Widget cardLabelText(String label, IconData labelIcon, BuildContext context) {
   return Text.rich(
@@ -214,82 +205,101 @@ Widget cardLabelText(String label, IconData labelIcon, BuildContext context) {
   );
 }
 
+//Needed cuz of toggle button colors get wrong when selected with cardLabelText
+Widget iconSpanText(String text, IconData icon) {
+  return Text.rich(
+    textAlign: TextAlign.center,
+    TextSpan(
+      style: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w600,
+      ),
+      children: [
+        TextSpan(text: text),
+        WidgetSpan(child: SizedBox(width: 4)),
+        WidgetSpan(
+          alignment: PlaceholderAlignment.middle,
+          child: Icon(icon),
+        ),
+      ],
+    ),
+  );
+}
+
 //Scrolling card pocket display
 Widget scrollingCardPocketDisplay(List<FinanceRecord> records, BuildContext context, String currency, VoidCallback refetchCallback) {
   ThemeData theme = Theme.of(context);
-  return SizedBox(
-    height: 200,
-    child: ListView.separated(
-      itemCount: records.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 10),
-      itemBuilder: (context, index) {
-        final record = records[index];
 
-        return Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(
-              color: Theme.of(context).textTheme.labelLarge?.color as Color,
+  return ListView.separated(
+    itemCount: records.length,
+    separatorBuilder: (_, _) => const SizedBox(height: 10),
+    itemBuilder: (context, index) {
+      final record = records[index];
+
+      return Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: record.type == RecordType.income ? greenColor : redColor,
+          ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 12,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    record.tag,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "${record.amount}",
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      color: record.type == RecordType.income ? greenColor : redColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text("Created: ${KnoxDateUtil.noMilliseconds(record.crtTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                  Text("Updated: ${KnoxDateUtil.noMilliseconds(record.updTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
+                ],
+              ),
             ),
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 12,
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      record.tag,
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "${record.amount}",
-                      style: theme.textTheme.bodyLarge?.copyWith(
-                        color: record.type == RecordType.income ? greenColor : redColor,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text("Created: ${KnoxDateUtil.noMilliseconds(record.crtTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
-                    Text("Updated: ${KnoxDateUtil.noMilliseconds(record.updTime)}", style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey)),
-                  ],
-                ),
-              ),
-              IconButton(
-                alignment: Alignment.bottomCenter,
-                icon: const Icon(Icons.edit),
-                style: inputFormButtonStyle(),
-                onPressed: () async {
-                  await showModalBottomSheet(
-                    isScrollControlled: false,
-                    context: context,
-                    builder: (context) {
-                      return RecordInputForm(updatingFinanceRecord: record,);
-                    },
-                  );
-                  refetchCallback();
-                },
-              ),
-              IconButton(
-                alignment: Alignment.bottomCenter,
-                icon: const Icon(Icons.remove_circle_outline_outlined),
-                color: Colors.redAccent,
-                style: inputFormButtonStyle(),
-                onPressed: () async {
-                  await FinanceRecordKeeper.deleteRecord(record);
-                  refetchCallback();
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    ),
+            IconButton(
+              alignment: Alignment.bottomCenter,
+              icon: const Icon(Icons.edit),
+              style: inputFormButtonStyle(),
+              onPressed: () async {
+                await showModalBottomSheet(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (context) {
+                    return RecordInputForm(updatingFinanceRecord: record,);
+                  },
+                );
+                refetchCallback();
+              },
+            ),
+            IconButton(
+              alignment: Alignment.bottomCenter,
+              icon: const Icon(Icons.remove_circle_outline_outlined),
+              color: Colors.redAccent,
+              style: inputFormButtonStyle(),
+              onPressed: () async {
+                FinanceRecordKeeper.deleteRecord(record);
+                refetchCallback();
+              },
+            ),
+          ],
+        ),
+      );
+    },
   );
 }

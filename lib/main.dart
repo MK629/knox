@@ -10,7 +10,7 @@ void main() async {
   // Sqflite.devSetDebugModeOn(true);
   await DbAccountant.initDb();
 
-  await LifeDutyEnforcer.enforceDuty();
+  LifeDutyEnforcer.enforceDuty();
 
   await WorkerBee.init();
   Map<dynamic, dynamic> prefs = await WorkerBee.getAllItems();

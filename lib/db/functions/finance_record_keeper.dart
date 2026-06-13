@@ -4,8 +4,24 @@ import 'package:knox/db/functions/db_accountant.dart';
 
 class FinanceRecordKeeper {
   static Future<List<FinanceRecord>> selectAllRecords() async {
-    List<Map<String, Object?>>? financeRecordResult =
-        await DbAccountant.getAllFromTable(TableNames.recTbl);
+    List<Map<String, Object?>>? financeRecordResult = await DbAccountant.getAllFromTable(TableNames.recTbl);
+
+    if (financeRecordResult == null || financeRecordResult.isEmpty) {
+      return [];
+    }
+
+    List<FinanceRecord> financeRecordList = financeRecordResult.map((mapFromDb) => FinanceRecord.fromMap(mapFromDb)).toList();
+
+    return financeRecordList.reversed.toList();
+  }
+
+  static Future<List<FinanceRecord>> selectAllRecordsDESC() async {
+    final db = DbAccountant.getDb;
+    DbAccountant.checkIfDbNullOrOpen(db);
+
+    List<Map<String, Object?>>? financeRecordResult = await db?.rawQuery(
+      'SELECT * FROM ${TableNames.recTbl} ORDER BY crt_time DESC;',
+    );
 
     if (financeRecordResult == null || financeRecordResult.isEmpty) {
       return [];
@@ -16,7 +32,7 @@ class FinanceRecordKeeper {
     return financeRecordList;
   }
 
-  static Future<List<FinanceRecord>> selectThisMonthRecords() async {
+  static Future<List<FinanceRecord>> selectThisMonthRecordsDESC() async {
     DateTime today = TimeHelper.todayDate;
 
     String datePattern;
@@ -73,7 +89,7 @@ class FinanceRecordKeeper {
     DbAccountant.checkIfDbNullOrOpen(db);
 
     List<Map<String, Object?>>? financeRecordResult = await db?.rawQuery(
-      'SELECT * FROM ${TableNames.recTbl} WHERE crt_time LIKE \'$datePattern\';',
+      'SELECT * FROM ${TableNames.recTbl} WHERE crt_time LIKE \'$datePattern\' ORDER BY crt_time DESC;',
     );
 
     if (financeRecordResult == null || financeRecordResult.isEmpty) {
