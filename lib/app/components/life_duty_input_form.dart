@@ -57,7 +57,7 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
 
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = Theme.of(context);
+    //ThemeData theme = Theme.of(context);
 
     return Padding(
       padding: const EdgeInsets.all(12.0),

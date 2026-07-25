@@ -48,7 +48,7 @@ class FinanceRecordKeeper {
   }
 
   static Future<List<FinanceRecord>> selectSpecificMonthRecords(int year, int month) async {
-    if (month > 12) {
+    if (month > 12 || month < 1) {
       throw Exception("${CommonMessages.invalidFormat} month :$month");
     }
 

@@ -19,7 +19,6 @@ class BudgetTracker extends StatefulWidget {
 class _BudgetTrackerState extends State<BudgetTracker> {
   bool incomeSel = true;
   late Future<List<FinanceRecord>> records;
-  late Future<List<FinanceRecord>> recordsOnShown;
 
   @override
   void initState() {
@@ -92,12 +91,10 @@ class _BudgetTrackerState extends State<BudgetTracker> {
                                       setState(() {
                                         incomeSel = true;
                                       });
-                                      refetch();
                                     } else if (index == 1) {
                                       setState(() {
                                         incomeSel = false;
                                       });
-                                      refetch();
                                     }
                                   },
                                   children: [
