@@ -85,7 +85,36 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
             ),
           ),
           updating ?
-          Text(updateInterval.name) //Make UI for this
+          Container(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      updateInterval.name.toUpperCase(),
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600
+                      )
+                    ),
+                  ),
+                ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Start date: ${KnoxDateUtil.noTime(startDate)}",
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w500
+                      )
+                    ),
+                  ),
+                )
+              ],
+            )
+          )
           :
           Container(
             alignment: Alignment.center,
@@ -121,7 +150,7 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
             controller: amountController,
           ),
           updating ?
-          Text(KnoxDateUtil.noTime(startDate))
+          SizedBox(height: 0, width: 0,) //Render nothing
           :
           InkWell(
             onTap: () async {
@@ -130,6 +159,16 @@ class _LifeDutyInputFormState extends State<LifeDutyInputForm> {
                 initialDate: startDate,
                 firstDate: DateTime(2000),
                 lastDate: DateTime(2100),
+                builder: (context, child) {
+                  return Theme(
+                    data: Theme.of(context).copyWith(
+                      iconButtonTheme: IconButtonThemeData(
+                        style: ButtonStyle(), //To override global button theme cuz it fucks up datepicker's default button styles.
+                      ),
+                    ),
+                    child: child!,
+                  );
+                }
               );
 
               if (pickedDate != null) {
