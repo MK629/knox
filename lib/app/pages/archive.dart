@@ -61,18 +61,34 @@ class _ArchiveState extends State<Archive> {
                     dropdownMenuEntries: [
                       for (int i = 1; i < TimeHelper.monthNames.length; i++)
                         DropdownMenuEntry(
-                          value: TimeHelper.monthNames[i],
+                          value: i,
                           label: TimeHelper.monthNames[i],
                         ),
                     ],
-                    onSelected: (value) => setState(() {
-                      month = TimeHelper.monthNames.indexOf(value as String);
-                    }),
+                    onSelected: (value) => {month = value},
+                    inputDecorationTheme: InputDecorationTheme(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    menuStyle: MenuStyle(
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                   ),
-                  SizedBox(width: 12,),
+                  SizedBox(width: 12),
                   Expanded(
                     child: TextFormField(
-                      decoration: InputDecoration(labelText: "Year"),
+                      decoration: InputDecoration(
+                        labelText: "Year",
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 17,
+                          horizontal: 12,
+                        ),
+                      ),
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
@@ -80,20 +96,19 @@ class _ArchiveState extends State<Archive> {
                       controller: yearController,
                     ),
                   ),
-                  SizedBox(width: 12,),
+                  SizedBox(width: 12),
                   IconButton(
                     style: ButtonStyle(
+                      iconSize: WidgetStatePropertyAll(39),
                       shape: WidgetStatePropertyAll(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(20),
                         ),
-                      )
+                      ),
                     ),
-                    icon: Icon(Icons.search_rounded),
+                    icon: Icon(Icons.search_outlined),
                     onPressed: () {
-                      setState(() {
-                        year = int.tryParse(yearController.text);
-                      });
+                      year = int.tryParse(yearController.text);
                       gofetch();
                     },
                   ),
@@ -106,8 +121,20 @@ class _ArchiveState extends State<Archive> {
               future: records,
               builder: (context, snapshot) {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Text("No data.");
-                } else if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "No data",
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                    ),
+                  );
+                } else if (snapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return CircularProgressIndicator();
                 }
 
@@ -189,7 +216,8 @@ class _ArchiveState extends State<Archive> {
                                       .where(
                                         (element) => incomeSel
                                             ? element.type == RecordType.income
-                                            : element.type == RecordType.expense,
+                                            : element.type ==
+                                                  RecordType.expense,
                                       )
                                       .toList(),
                                   context,
